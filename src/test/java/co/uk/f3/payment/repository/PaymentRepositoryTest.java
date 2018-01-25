@@ -1,5 +1,8 @@
 package co.uk.f3.payment.repository;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,5 +14,10 @@ public class PaymentRepositoryTest {
 	
 	@Autowired
 	private PaymentRepository underTest;
+	
+	@Test
+	public void test() throws Exception {
+		assertEquals(1, 1);
+	}
 
 }
