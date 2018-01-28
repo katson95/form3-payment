@@ -3,13 +3,13 @@ package co.uk.f3.payment.service;
 import java.util.Optional;
 import java.util.Set;
 
-import co.uk.f3.payment.model.Payment;
+import co.uk.f3.payment.model.domain.Payment;
 
 public interface IPaymentService {
 
 	public Optional<Payment> saveOrUpdatePayment(Payment payment);
 
-	public Optional<Payment> fetchPaymentByOrganisationId(String organisationId);
+	public Optional<Payment> fetchPaymentByPaymentId(String paymentId);
 
 	public Set<Payment> fetchPayments();
 

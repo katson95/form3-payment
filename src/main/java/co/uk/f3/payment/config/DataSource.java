@@ -23,7 +23,7 @@ public class DataSource extends AbstractMongoConfiguration{
 		
 		@Override
 	    protected String getMappingBasePackage() {
-	        return "co.uk.f3.payment.model";
+	        return "co.uk.f3.payment.model.domain";
 	    }
 
 }

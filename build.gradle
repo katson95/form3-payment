@@ -4,11 +4,13 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
+		maven { url "https://plugins.gradle.org/m2/" }
 		maven { url "https://repo.spring.io/snapshot" }
 		maven { url "https://repo.spring.io/milestone" }
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("com.github.samueltbrown:gradle-cucumber-plugin:0.9")
 	}
 }
 
@@ -16,15 +18,29 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: org.springframework.boot.gradle.plugin.SpringBootPlugin
+apply plugin: 'com.github.samueltbrown.cucumber'
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+
+jar {
+    baseName = 'f3-payment-service'
+    version = '0.0.1-SNAPSHOT'
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testRuntime
+    }
+}
+
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
 	maven { url "https://repo.spring.io/snapshot" }
 	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://dl.bintray.com/palantir/releases"}
 }
 
 
@@ -38,10 +54,39 @@ dependencies {
 	compile('com.fasterxml.jackson.core:jackson-core')
 	compile('com.fasterxml.jackson.core:jackson-annotations')
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
-	compile('io.springfox:springfox-swagger2:2.8.0')
-	compile('io.springfox:springfox-swagger-ui:2.8.0')
+	
+	compile('io.springfox:springfox-swagger2:2.6.1')
+	compile('io.springfox:springfox-swagger-ui:2.6.1')
+	
 	compileOnly "org.projectlombok:lombok:1.16.16"
+	
+        
+    testCompile 'info.cukes:cucumber-java:1.2.5'
+    testCompile 'info.cukes:cucumber-junit:1.2.5'
+    testCompile 'info.cukes:cucumber-spring:1.2.5'
+        
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.33.0'
+	
+	compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
+	
+}
+
+task cucumber(overwrite: true) {
+
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "cucumber.api.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', '--glue', 'co.uk.f3.payment.e2e', 'src/test/resources/features']
+        }
+    }
+}
+
+test {
+    testLogging.showStandardStreams = true
+    systemProperties System.getProperties()
 }
 
 dependencyManagement {

@@ -14,8 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @MappedSuperclass
 public abstract class AbstractCollection {
-	
+
 	@Id
-	private ObjectId  id;
+	private ObjectId id;
 
 }

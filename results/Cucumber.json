@@ -1,0 +1,49 @@
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "line": 2,
+        "name": "client makes call to GET /version",
+        "description": "",
+        "id": "the-version-can-be-retrieved;client-makes-call-to-get-/version",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "status": "undefined"
+            },
+            "line": 3,
+            "name": "the client calls /version",
+            "match": {},
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "status": "undefined"
+            },
+            "line": 4,
+            "name": "the client receives status code of 200",
+            "match": {},
+            "keyword": "Then "
+          },
+          {
+            "result": {
+              "status": "undefined"
+            },
+            "line": 5,
+            "name": "the client receives server version 1.0",
+            "match": {},
+            "keyword": "And "
+          }
+        ]
+      }
+    ],
+    "name": "the version can be retrieved",
+    "description": "",
+    "id": "the-version-can-be-retrieved",
+    "keyword": "Feature",
+    "uri": "version.feature"
+  }
+]
