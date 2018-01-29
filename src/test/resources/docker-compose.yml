@@ -3,7 +3,7 @@ version: "3"
 services:
   f3-payment-db:
     build:
-      context: mongo
+      context: mysql
       dockerfile: Dockerfile
     ports:
-      - "27017:27017"
+      - "3306:3306"
