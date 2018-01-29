@@ -9,6 +9,14 @@
 .project
 .settings
 .springBeans
+cucumber-reporting.iml
+results
+reports
+pretty
+/cucumber-reporting.iml
+/results
+/reports
+/pretty
 
 ### IntelliJ IDEA ###
 .idea

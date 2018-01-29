@@ -2,20 +2,18 @@ package co.uk.f3.payment.component.repository;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.palantir.docker.compose.DockerComposeRule;
 
 import co.uk.f3.manager.PaymentCollectionGenerator;
 import co.uk.f3.payment.model.domain.Payment;
@@ -31,9 +29,9 @@ public class PaymentRespositoryTest {
 	@Autowired
 	private IPaymentRepository underTest;
 
-	@ClassRule
-	public static DockerComposeRule docker = DockerComposeRule.builder().file("src/test/resources/docker-compose.yml")
-			.build();
+//	@ClassRule
+//	public static DockerComposeRule docker = DockerComposeRule.builder().file("src/test/resources/docker-compose.yml")
+//			.build();
 
 	@Before
 	public void startUp() {
@@ -41,15 +39,21 @@ public class PaymentRespositoryTest {
 	}
 
 	@Test
-	public void fetchPaymentByOrganisationId_shouldReturnExistingPayment() throws Exception {
-		String paymentId = UUID.randomUUID().toString();
-		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithPaymentId(paymentId);
-		mongoTemplate.insert(payment);
+	public void fetchPaymentById_shouldReturnExistingPayment() throws Exception {
+		
+		Payment p1 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+		Payment p2 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+		Payment p3 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+		Payment p4 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
 
-		Optional<Payment> savedPayment = underTest.findPaymentByPaymentId(paymentId);
+		mongoTemplate.insert(new ArrayList<>(Arrays.asList(p1, p2, p3, p4)), Payment.class);
+		
+		String paymentId = mongoTemplate.findAll(Payment.class).get(0).getId().toString();
+
+		Optional<Payment> savedPayment = underTest.findById(paymentId);
 
 		assertNotNull(savedPayment.get().getId());
-		assertNotNull(savedPayment.get().getOrganisationId(), paymentId);
+		assertNotNull(savedPayment.get().getId().toString(), paymentId);
 	}
 
 	@After

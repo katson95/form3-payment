@@ -10,11 +10,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -57,19 +59,19 @@ public class PaymentServiceTest {
 
 	@Test
 	public void fetchPaymentBypaymentId_shouldReturnPayment() throws Exception {
-		String paymentId = UUID.randomUUID().toString();
-		Payment payment = Payment.builder().type(ResourceType.PAYMENT).paymentId(paymentId).build();
+		ObjectId id = new ObjectId(new Date());
+		Payment payment = Payment.builder().type(ResourceType.PAYMENT).id(id).build();
 
 		Optional<Payment> paymentValue = Optional.of(payment);
 
-		when(underTest.fetchPaymentByPaymentId(paymentId)).thenReturn(paymentValue);
+		when(underTest.fetchPaymentById(id.toString())).thenReturn(paymentValue);
 	}
 
 	@Test
 	public void fetchPayments_shouldReturnAllPayments() throws Exception {
-		Payment payment1 = Payment.builder().type(ResourceType.PAYMENT).paymentId(UUID.randomUUID().toString())
+		Payment payment1 = Payment.builder().type(ResourceType.PAYMENT).id(new ObjectId(new Date()))
 				.build();
-		Payment payment2 = Payment.builder().type(ResourceType.PAYMENT).paymentId(UUID.randomUUID().toString())
+		Payment payment2 = Payment.builder().type(ResourceType.PAYMENT).id(new ObjectId(new Date()))
 				.build();
 
 		List<Payment> payments = new ArrayList<>(Arrays.asList(payment1, payment2));
@@ -83,7 +85,7 @@ public class PaymentServiceTest {
 		String paymentId = UUID.randomUUID().toString();
 		doNothing().when(paymentRepository).deleteById(paymentId);
 
-		underTest.deletePaymentByPaymentId(paymentId);
+		underTest.deletePaymentById(paymentId);
 
 		verify(paymentRepository, times(1)).deleteById(paymentId);
 

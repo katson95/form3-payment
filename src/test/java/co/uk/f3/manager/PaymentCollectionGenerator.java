@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.UUID;
+
+import org.bson.types.ObjectId;
 
 import co.uk.f3.payment.model.domain.Attribute;
 import co.uk.f3.payment.model.domain.Charge;
@@ -24,26 +27,38 @@ import co.uk.f3.payment.utils.enums.SchemePaymentType;
 
 public class PaymentCollectionGenerator {
 
-	public static Payment createBasicTestPayment(){
+	public static Payment createBasicTestPaymentWithoutId(){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
-				.paymentId(UUID.randomUUID().toString())
 				.organisationId(UUID.randomUUID().toString())
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
-				.version(1)
+				.version(0)
 				.build();
 	}
 	
-	public static Payment createBasicTestPaymentWithPaymentId(String paymentId){
+	public static Payment createBasicTestPayment(){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
-				.paymentId(paymentId)
+				.id(new ObjectId(new Date()))
 				.organisationId(UUID.randomUUID().toString())
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
+				.version(0)
 				.build();
 	}
+	
+	public static Payment createBasicTestPaymentWithOrganisationId(String organisationId){
+		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
+		return Payment.builder()
+				.id(new ObjectId(new Date()))
+				.organisationId(organisationId)
+				.attribute(attribute)
+				.type(ResourceType.PAYMENT)
+				.version(0)
+				.build();
+	}
+	
 	
 	private static Money buildTestMoney(BigDecimal amount, String code) {
 		return Money.builder()

@@ -9,9 +9,9 @@ public interface IPaymentService {
 
 	public Optional<Payment> saveOrUpdatePayment(Payment payment);
 
-	public Optional<Payment> fetchPaymentByPaymentId(String paymentId);
+	public Optional<Payment> fetchPaymentById(String id);
 
 	public Set<Payment> fetchPayments();
 
-	public void deletePaymentByPaymentId(String paymentId);
+	public void deletePaymentById(String id);
 }

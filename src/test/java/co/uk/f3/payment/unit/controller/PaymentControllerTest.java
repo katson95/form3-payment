@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,17 +43,12 @@ public class PaymentControllerTest {
 
 	@Test
 	public void fetchPayments_shouldReturnAllPayments() throws Exception {
-
-		String organisatio_id1 = UUID.randomUUID().toString();
-		String organisatio_id2 = UUID.randomUUID().toString();
-		String organisatio_id3 = UUID.randomUUID().toString();
-		String organisatio_id4 = UUID.randomUUID().toString();
 		
 		
-		Payment p1 = PaymentCollectionGenerator.createBasicTestPaymentWithPaymentId(organisatio_id1);
-		Payment p2 = PaymentCollectionGenerator.createBasicTestPaymentWithPaymentId(organisatio_id2);
-		Payment p3 = PaymentCollectionGenerator.createBasicTestPaymentWithPaymentId(organisatio_id3);
-		Payment p4 = PaymentCollectionGenerator.createBasicTestPaymentWithPaymentId(organisatio_id4);
+		Payment p1 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p2 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p3 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p4 = PaymentCollectionGenerator.createBasicTestPayment();
 
 		Set<Payment> payments = new HashSet<>(Arrays.asList(p1, p2, p3, p4));
 

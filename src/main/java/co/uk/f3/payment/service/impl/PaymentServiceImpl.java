@@ -33,9 +33,9 @@ public class PaymentServiceImpl implements IPaymentService {
 	}
 
 	@Override
-	public Optional<Payment> fetchPaymentByPaymentId(String paymentId) {
-		LOGGER.info(paymentId);
-		return paymentRepository.findPaymentByPaymentId(paymentId);
+	public Optional<Payment> fetchPaymentById(String id) {
+		LOGGER.info(id);
+		return paymentRepository.findById(id);
 	}
 
 	@Override
@@ -44,8 +44,8 @@ public class PaymentServiceImpl implements IPaymentService {
 	}
 
 	@Override
-	public void deletePaymentByPaymentId(String paymentId) {
-		paymentRepository.deleteById(paymentId);
+	public void deletePaymentById(String id) {
+		paymentRepository.deleteById(id);
 
 	}
 
