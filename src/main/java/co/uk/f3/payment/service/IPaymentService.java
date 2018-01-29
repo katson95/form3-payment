@@ -9,7 +9,7 @@ public interface IPaymentService {
 
 	public Optional<Payment> saveOrUpdatePayment(Payment payment);
 
-	public Optional<Payment> fetchPaymentByPaymentId(String paymentId);
+	public Optional<Payment> fetchPaymentById(String paymentId);
 
 	public Set<Payment> fetchPayments();
 

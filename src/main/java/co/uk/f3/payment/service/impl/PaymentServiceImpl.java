@@ -33,9 +33,9 @@ public class PaymentServiceImpl implements IPaymentService {
 	}
 
 	@Override
-	public Optional<Payment> fetchPaymentByPaymentId(String paymentId) {
+	public Optional<Payment> fetchPaymentById(String paymentId) {
 		LOGGER.info(paymentId);
-		return paymentRepository.findPaymentByPaymentId(paymentId);
+		return paymentRepository.findById(paymentId);
 	}
 
 	@Override

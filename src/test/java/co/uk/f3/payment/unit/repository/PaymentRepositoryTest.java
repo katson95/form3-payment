@@ -34,7 +34,7 @@ public class PaymentRepositoryTest {
 				.paymentId(paymentId)
 				.build();
 		Optional<Payment> paymentValue = Optional.of(payment);
-		when(paymentRepositoryMock.findPaymentByPaymentId(paymentId)).thenReturn(paymentValue);
+		when(paymentRepositoryMock.findById(paymentId)).thenReturn(paymentValue);
 	}
 
 }

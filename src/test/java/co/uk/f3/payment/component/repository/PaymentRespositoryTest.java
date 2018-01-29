@@ -46,7 +46,7 @@ public class PaymentRespositoryTest {
 		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithPaymentId(paymentId);
 		mongoTemplate.insert(payment);
 
-		Optional<Payment> savedPayment = underTest.findPaymentByPaymentId(paymentId);
+		Optional<Payment> savedPayment = underTest.findById(paymentId);
 
 		assertNotNull(savedPayment.get().getId());
 		assertNotNull(savedPayment.get().getOrganisationId(), paymentId);

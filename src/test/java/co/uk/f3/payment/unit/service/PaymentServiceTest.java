@@ -62,7 +62,7 @@ public class PaymentServiceTest {
 
 		Optional<Payment> paymentValue = Optional.of(payment);
 
-		when(underTest.fetchPaymentByPaymentId(paymentId)).thenReturn(paymentValue);
+		when(underTest.fetchPaymentById(paymentId)).thenReturn(paymentValue);
 	}
 
 	@Test

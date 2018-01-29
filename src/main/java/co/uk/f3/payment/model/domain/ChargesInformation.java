@@ -2,8 +2,14 @@ package co.uk.f3.payment.model.domain;
 
 import java.util.Collection;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,12 +23,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Document(collection = "CHARGE_INFORMATION")
+@Entity
+@Table(name = "CHARGE_INFORMATION")
 public class ChargesInformation {
 
-	@Field(value = "BEARER_CODE")
+	@Column(name = "BEARER_CODE")
 	private String bearerCode;
 
-	@Field(value = "CHARGES")
+	@OneToMany(mappedBy = "chargeInformation", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JsonManagedReference
 	private Collection<Charge> charges;
 }

@@ -2,10 +2,11 @@ package co.uk.f3.payment.model.domain;
 
 import java.math.BigDecimal;
 
-import org.hibernate.annotations.Immutable;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+import org.hibernate.annotations.Immutable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,14 +19,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Document(collection = "MONEY")
 @Immutable
+@Entity
+@Table(name = "MONEY")
 public class Money {
 
-	@Field(value = "AMOUNT")
+	@Column(name = "AMOUNT")
 	private BigDecimal amount;
 
-	@Field(value = "CURRENCY")
+	@Column(name = "CURRENCY")
 	private String currency;
 
 }

@@ -1,9 +1,10 @@
 package co.uk.f3.payment.model;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import org.bson.types.ObjectId;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import lombok.Setter;
 public abstract class AbstractCollection {
 
 	@Id
-	private ObjectId id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "ID")
+	private Long id;
 
 }

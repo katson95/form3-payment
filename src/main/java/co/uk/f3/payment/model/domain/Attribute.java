@@ -3,12 +3,17 @@ package co.uk.f3.payment.model.domain;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import co.uk.f3.payment.utils.converter.LocalDateTimeConverter;
 import co.uk.f3.payment.utils.enums.PaymentType;
@@ -18,7 +23,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-//import lombok.NoArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Builder
@@ -26,62 +30,68 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Document(collection = "ATTRIBUTE")
+@Entity
+@Table(name = "ATTRIBUTE")
 public class Attribute {
 
-	@Field(value = "AMOUNT")
+	@Column(name = "AMOUNT")
 	private BigDecimal amount;
 
-	@Field(value = "CURRENCY")
+	@Column(name = "CURRENCY")
 	private String currency;
 
-	@Field(value = "CHARGES_INFORMATION")
+	@OneToOne(mappedBy = "attribute", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JsonManagedReference
 	private ChargesInformation chargesInformation;
 
-	@Field(value = "END_TO_END_REFERENCE")
+	@Column(name = "END_TO_END_REFERENCE")
 	private String endOfEndPreference;
 
-	@Field(value = "FX")
+	@OneToOne(mappedBy = "attribute", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JsonManagedReference
 	private Fx fx;
 
-	@Field(value = "NUMERIC_REFERENCE")
+	@Column(name = "NUMERIC_REFERENCE")
 	private String numericReference;
 
-	@Field(value = "PAYMENT_ID")
+	@Column(name = "PAYMENT_ID")
 	private String paymentId;
 
-	@Field(value = "PAYMENT_PURPOSE")
+	@Column(name = "PAYMENT_PURPOSE")
 	private String paymentPurpose;
 
-	@Field(value = "PAYMENT_SCHEME")
+	@Column(name = "PAYMENT_SCHEME")
 	private String paymentScheme;
 
-	@Field(value = "PAYEMTN_TYPE")
+	@Column(name = "PAYEMTN_TYPE")
 	@Enumerated(EnumType.STRING)
 	private PaymentType paymentType;
 
-	@Field(value = "PROCESSING_DATE")
+	@Column(name = "PROCESSING_DATE")
 	@Convert(converter = LocalDateTimeConverter.class)
 	private LocalDateTime processingDate;
 
-	@Field(value = "REFERENCE")
+	@Column(name = "REFERENCE")
 	private String reference;
 
-	@Field(value = "SCHEME_PAYMENT_TYPE")
+	@Column(name = "SCHEME_PAYMENT_TYPE")
 	@Enumerated(EnumType.STRING)
 	private SchemePaymentType schemePaymentType;
 
-	@Field(value = "SCHEME_PAYMENT_SUB_TYPE")
+	@Column(name = "SCHEME_PAYMENT_SUB_TYPE")
 	@Enumerated(EnumType.STRING)
 	private SchemePaymentType schemePaymentSubType;
 
-	@Field(value = "BENEFICIARY_PARTY")
+	@OneToOne(mappedBy = "attribute", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JsonManagedReference
 	private Party beneficiaryParty;
 
-	@Field(value = "DEBITOR_PARTY")
+	@OneToOne(mappedBy = "attribute", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JsonManagedReference
 	private Party debitorParty;
 
-	@Field(value = "SPNSOR_PARTY")
+	@OneToOne(mappedBy = "attribute", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JsonManagedReference
 	private Party sponsorParty;
 
 }

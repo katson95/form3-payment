@@ -1,11 +1,11 @@
 package co.uk.f3.payment.model.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import co.uk.f3.payment.utils.enums.AccountType;
 import co.uk.f3.payment.utils.enums.PartyType;
@@ -21,33 +21,34 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Document(collection = "PARTY")
+@Entity
+@Table(name = "PARTY")
 public class Party {
 
-	@Field(value = "ACCOUNT_NAME")
+	@Column(name = "ACCOUNT_NAME")
 	private String accountName;
 
-	@Field(value = "ACCOUNT_NUMBER")
+	@Column(name = "ACCOUNT_NUMBER")
 	private String accountNumber;
 
-	@Field(value = "ACCOUNT_NUMBER_CODE")
+	@Column(name = "ACCOUNT_NUMBER_CODE")
 	private String accountNumberCode;
 
-	@Field(value = "PARTY_TYPE")
+	@Column(name = "PARTY_TYPE")
 	@Enumerated(EnumType.STRING)
 	private PartyType partType;
 
-	@Field(value = "ACCOUNT_TYPE")
+	@Column(name = "ACCOUNT_TYPE")
 	@Enumerated(EnumType.STRING)
 	private AccountType accountType;
 
-	@Field(value = "ADDRESS")
+	@Column(name = "ADDRESS")
 	private String address;
 
-	@Field(value = "BANK_ID")
+	@Column(name = "BANK_ID")
 	private String bankId;
 
-	@Field(value = "BANK_ID_CODE")
+	@Column(name = "BANK_ID_CODE")
 	private String bankIdCode;
 
 	@Transient

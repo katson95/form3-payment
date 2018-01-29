@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.uk.f3.payment.exception.handler.EntityNotFoundException;
 import co.uk.f3.payment.model.domain.Payment;
-import co.uk.f3.payment.model.dto.PaymentDTO;
 import co.uk.f3.payment.service.IPaymentService;
-import co.uk.f3.payment.utils.mapper.PaymentObjectMapper;
 
 
 @RestController
@@ -31,8 +28,6 @@ public class PaymentController {
 
 	private IPaymentService paymentService;
 	
-	@Autowired
-	private PaymentObjectMapper objectMapper;
 
 	public PaymentController(IPaymentService paymentService) {
 		this.paymentService = paymentService;
@@ -45,11 +40,10 @@ public class PaymentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public ResponseEntity<?> createPaymentDTO(@Validated @RequestBody PaymentDTO paymentDTO) {
+	public ResponseEntity<?> createPaymentDTO(@Validated @RequestBody Payment payment) {
 		LOGGER.info("Creating new PaymentDTO: {}");
-		Payment payment = objectMapper.mapToPaymentDocument(paymentDTO);
 		Optional<Payment> paymentValue = paymentService.saveOrUpdatePayment(payment);
-		return new ResponseEntity<PaymentDTO>(objectMapper.mapToPaymentDTO(paymentValue.get()), HttpStatus.CREATED);
+		return new ResponseEntity<Payment>(paymentValue.get(), HttpStatus.CREATED);
 	}
 
 	/**
@@ -61,14 +55,14 @@ public class PaymentController {
 	@RequestMapping(value = "/{paymentId}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchPaymentById(@PathVariable("paymentId") String paymentId) {
 		LOGGER.info("fetching PaymentDTO : {}", paymentId);
-		Optional<Payment> optionalPayment = paymentService.fetchPaymentByPaymentId(paymentId);
+		Optional<Payment> optionalPayment = paymentService.fetchPaymentById(paymentId);
 		if (!optionalPayment.isPresent()) {
 			LOGGER.error("PaymentDTO with paymentId {} not found.", paymentId);
 			throw new EntityNotFoundException(paymentId);
 		}
 
 		Payment paymentValue = optionalPayment.get();
-		return new ResponseEntity<PaymentDTO>(objectMapper.mapToPaymentDTO(paymentValue), HttpStatus.OK);
+		return new ResponseEntity<Payment>(paymentValue, HttpStatus.OK);
 
 	}
 
@@ -80,12 +74,11 @@ public class PaymentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{paymentId}", method = RequestMethod.PUT)
-	public ResponseEntity<?> updatePaymentDTO(@PathVariable("paymentId") String paymentId, @RequestBody PaymentDTO paymentDTO) {
+	public ResponseEntity<?> updatePaymentDTO(@PathVariable("paymentId") String paymentId, @RequestBody Payment payment) {
 		LOGGER.info("Updating PaymentDTO with id: {}", paymentId);
-		Payment payment = objectMapper.mapToPaymentDocument(paymentDTO);
 		Optional<Payment> paymentValue = paymentService.saveOrUpdatePayment(payment);
 
-		return new ResponseEntity<PaymentDTO>(objectMapper.mapToPaymentDTO(paymentValue.get()), HttpStatus.OK);
+		return new ResponseEntity<Payment>(paymentValue.get(), HttpStatus.OK);
 
 	}
 
@@ -95,14 +88,13 @@ public class PaymentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ResponseEntity<Set<PaymentDTO>> fetchpaymentDTOs() {
+	public ResponseEntity<Set<Payment>> fetchpaymentDTOs() {
 		Set<Payment> payments = paymentService.fetchPayments().stream().collect(Collectors.toSet());
 
 		if (payments.isEmpty()) {
-			return new ResponseEntity<Set<PaymentDTO>>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Set<Payment>>(HttpStatus.NO_CONTENT);
 		}
-		Set<PaymentDTO> paymentDTOs = payments.stream().map(p -> objectMapper.mapToPaymentDTO(p)).collect(Collectors.toSet());
-		return new ResponseEntity<Set<PaymentDTO>>(paymentDTOs, HttpStatus.OK);
+		return new ResponseEntity<Set<Payment>>(payments, HttpStatus.OK);
 	}
 
 	/**

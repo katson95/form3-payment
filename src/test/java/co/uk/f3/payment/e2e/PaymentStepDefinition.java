@@ -15,8 +15,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import co.uk.f3.manager.PaymentCollectionGenerator;
 import co.uk.f3.payment.model.domain.Payment;
-import co.uk.f3.payment.model.dto.PaymentDTO;
-import co.uk.f3.payment.utils.mapper.PaymentObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -31,13 +29,11 @@ public class PaymentStepDefinition {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
-	private ResponseEntity<PaymentDTO> response;
+	private ResponseEntity<Payment> response;
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	
-	@Autowired
-	private PaymentObjectMapper objectMapper;
 	
 
 	@Given("^a client with organisationId (.*) has made a payment$")
@@ -45,14 +41,13 @@ public class PaymentStepDefinition {
 		Payment p = PaymentCollectionGenerator.createBasicTestPaymentWithPaymentId(paymentId);
 		mongoTemplate.insert(p);
 
-		this.response = this.restTemplate.getForEntity("/payments/v1/" + paymentId, PaymentDTO.class);
+		this.response = this.restTemplate.getForEntity("/payments/v1/" + paymentId, Payment.class);
 
 	}
 
 	@When("^the client makes a request to the end point /payments/v1/ with its organisationId$")
 	public void the_client_class_the_end_point_payments_with_its_organisationId() throws Throwable {
-		PaymentDTO createdPaymentdDTO = this.response.getBody();
-		Payment createdPayment = objectMapper.mapToPaymentDocument(createdPaymentdDTO);
+		Payment createdPayment = this.response.getBody();
 		assertNotNull(createdPayment.getPaymentId());
 	}
 
@@ -63,8 +58,7 @@ public class PaymentStepDefinition {
 
 	@And("^the response body must contain ordganisation_id (.*)")
 	public void theResponseBodyMustContainFieldWithValue(String paymentId) throws Throwable {
-		PaymentDTO createdPaymentdDTO = this.response.getBody();
-		Payment createdPayment = objectMapper.mapToPaymentDocument(createdPaymentdDTO);
+		Payment createdPayment = this.response.getBody();
 		assertEquals(createdPayment.getPaymentId(), paymentId);
 	}
 	

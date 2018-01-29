@@ -1,10 +1,10 @@
 package co.uk.f3.payment.model.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import javax.persistence.Table;
 
 import co.uk.f3.payment.utils.enums.ChargeType;
 import lombok.AccessLevel;
@@ -19,14 +19,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Document(collection = "CHARGE")
+@Entity
+@Table(name = "CHARGE")
 public class Charge {
 
-	@Field(value = "CHARGE_TYPE")
+	@Column(name = "CHARGE_TYPE")
 	@Enumerated(EnumType.STRING)
 	private ChargeType chargeType;
 
-	@Field(value = "FUND")
+	@Column(name = "FUND")
 	private Money fund;
 
 }

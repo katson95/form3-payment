@@ -1,11 +1,18 @@
 package co.uk.f3.payment.model.domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import co.uk.f3.payment.model.AbstractCollection;
 import co.uk.f3.payment.utils.enums.ResourceType;
@@ -21,24 +28,28 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Document(collection = "PAYMENT")
+@Entity
+@Table(name = "PAYMENT")
 public class Payment extends AbstractCollection {
 	
-	@Field(value = "PAYMENT_ID")
+	@Column(name = "PAYMENT_ID")
+	@NotNull
 	private String paymentId;
 
-	@Field(value = "ORGANISATION_ID")
+	@Column(name = "ORGANISATION_ID")
+	@NotNull
 	private String organisationId;
 	
-	@Field(value = "TYPE")
+	@Column(name = "TYPE")
 	@Enumerated(EnumType.STRING)
 	private ResourceType type;
 	
-	@Field(value = "ATTRIBUTE")
+	@OneToOne(mappedBy = "payment", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JsonManagedReference
 	private Attribute attribute;
 	
-	@Field(value = "VERSION")
-	@Version()
+	@Version
+	@Column(name="VERSION")
 	private int version;
 
 }

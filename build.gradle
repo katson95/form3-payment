@@ -55,12 +55,19 @@ dependencies {
 	compile('com.fasterxml.jackson.core:jackson-annotations')
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 	
+	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'mysql:mysql-connector-java'
+	
 	compile('io.springfox:springfox-swagger2:2.6.1')
 	compile('io.springfox:springfox-swagger-ui:2.6.1')
 	
 	compileOnly "org.projectlombok:lombok:1.16.16"
 	
-        
+	compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
+    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure'
+	
+    
+    
     testCompile 'info.cukes:cucumber-java:1.2.5'
     testCompile 'info.cukes:cucumber-junit:1.2.5'
     testCompile 'info.cukes:cucumber-spring:1.2.5'

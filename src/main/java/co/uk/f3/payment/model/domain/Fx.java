@@ -1,7 +1,13 @@
 package co.uk.f3.payment.model.domain;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,15 +21,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Document(collection = "FX")
+@Entity
+@Table(name = "FX")
 public class Fx {
 
-	@Field(value = "CONTRACT_REFERENCE")
+	@Column(name = "CONTRACT_REFERENCE")
 	private String contractReference;
 
-	@Field(value = "EXCHANGE_RATE")
+	@Column(name = "EXCHANGE_RATE")
 	private String exchangeRate;
 
-	@Field(value = "ORIGINAL_FUND")
+	@OneToOne(mappedBy = "fx", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JsonManagedReference
 	private Money originalFund;
 }
