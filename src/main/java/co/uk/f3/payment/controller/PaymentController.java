@@ -38,7 +38,7 @@ public class PaymentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public ResponseEntity<?> createPaymentDTO(@Validated @RequestBody Payment payment) {
+	public ResponseEntity<?> createPayment(@Validated @RequestBody Payment payment) {
 		LOGGER.info("Creating new PaymentDTO: {}");
 		Optional<Payment> paymentValue = paymentService.saveOrUpdatePayment(payment);
 		return new ResponseEntity<Payment>(paymentValue.get(), HttpStatus.CREATED);
