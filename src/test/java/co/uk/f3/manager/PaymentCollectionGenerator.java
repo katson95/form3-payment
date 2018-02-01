@@ -3,7 +3,6 @@ package co.uk.f3.manager;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -11,7 +10,6 @@ import co.uk.f3.payment.model.domain.Attribute;
 import co.uk.f3.payment.model.domain.Charge;
 import co.uk.f3.payment.model.domain.ChargesInformation;
 import co.uk.f3.payment.model.domain.Fx;
-import co.uk.f3.payment.model.domain.Money;
 import co.uk.f3.payment.model.domain.Party;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.utils.enums.AccountType;
@@ -45,12 +43,6 @@ public class PaymentCollectionGenerator {
 				.build();
 	}
 	
-	private static Money buildTestMoney(BigDecimal amount, String code) {
-		return Money.builder()
-				.amount(amount)
-				.currency(Currency.getInstance(code).toString())
-				.build();
-	}
 
 	private static Party buildTestBeneficiaryParty(PartyType type) {
 		return Party.builder()
@@ -90,20 +82,21 @@ public class PaymentCollectionGenerator {
 	}
 	
 	private static Charge buildTestCharge(ChargeType type, BigDecimal amount, String currencyCode) {
-		Money fund = buildTestMoney(amount, currencyCode);
+		
 		return Charge.builder()
 				.chargeType(type)
-				.fund(fund)
+				.amount(new BigDecimal("200.42"))
+				.currency("USD")
 				.build();
 		
 	}
 	
 	private static Fx buildTestFx() {
-		Money fund = buildTestMoney(new BigDecimal("200.42"), "USD");
 		return Fx.builder()
 				.contractReference("FX123")
 				.exchangeRate("2.00000")
-				.originalFund(fund)
+				.amount(new BigDecimal("200.42"))
+				.currency("USD")
 				.build();
 	}
 	

@@ -4,9 +4,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import co.uk.f3.payment.model.AbstractCollection;
 import co.uk.f3.payment.utils.enums.AccountType;
 import co.uk.f3.payment.utils.enums.PartyType;
 import lombok.AccessLevel;
@@ -23,7 +29,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "PARTY")
-public class Party {
+public class Party extends AbstractCollection{
 
 	@Column(name = "ACCOUNT_NAME")
 	private String accountName;
@@ -50,6 +56,11 @@ public class Party {
 
 	@Column(name = "BANK_ID_CODE")
 	private String bankIdCode;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ATTRIBUTE_ID")
+	@JsonBackReference
+	private Attribute attribute;
 
 	@Transient
 	private String name;
