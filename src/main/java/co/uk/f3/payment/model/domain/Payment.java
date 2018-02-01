@@ -3,7 +3,6 @@ package co.uk.f3.payment.model.domain;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -26,7 +25,8 @@ import lombok.NoArgsConstructor;
 public class Payment {
 
 	@Id
-	private ObjectId id;
+	@Field
+	private String id;
 
 	@Field(value = "ORGANISATION_ID")
 	private String organisationId;

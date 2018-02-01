@@ -10,13 +10,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -59,7 +57,7 @@ public class PaymentServiceTest {
 
 	@Test
 	public void fetchPaymentBypaymentId_shouldReturnPayment() throws Exception {
-		ObjectId id = new ObjectId(new Date());
+		String id = UUID.randomUUID().toString();
 		Payment payment = Payment.builder().type(ResourceType.PAYMENT).id(id).build();
 
 		Optional<Payment> paymentValue = Optional.of(payment);
@@ -69,9 +67,9 @@ public class PaymentServiceTest {
 
 	@Test
 	public void fetchPayments_shouldReturnAllPayments() throws Exception {
-		Payment payment1 = Payment.builder().type(ResourceType.PAYMENT).id(new ObjectId(new Date()))
+		Payment payment1 = Payment.builder().type(ResourceType.PAYMENT).id(UUID.randomUUID().toString())
 				.build();
-		Payment payment2 = Payment.builder().type(ResourceType.PAYMENT).id(new ObjectId(new Date()))
+		Payment payment2 = Payment.builder().type(ResourceType.PAYMENT).id(UUID.randomUUID().toString())
 				.build();
 
 		List<Payment> payments = new ArrayList<>(Arrays.asList(payment1, payment2));

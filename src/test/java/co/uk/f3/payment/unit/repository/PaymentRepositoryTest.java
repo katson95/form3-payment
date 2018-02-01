@@ -3,10 +3,9 @@ package co.uk.f3.payment.unit.repository;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
-import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -29,9 +28,9 @@ public class PaymentRepositoryTest {
 
 	@Test
 	public void test_findPaymentById_ShouldReturnPayment() throws Exception {
-		String paymentId = new ObjectId(new Date()).toString();
+		String paymentId = UUID.randomUUID().toString();
 		Payment payment = Payment.builder()
-				.id(new ObjectId(paymentId))
+				.id(paymentId)
 				.type(ResourceType.PAYMENT)
 				.build();
 		Optional<Payment> paymentValue = Optional.of(payment);

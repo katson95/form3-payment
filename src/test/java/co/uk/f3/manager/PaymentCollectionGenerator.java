@@ -30,6 +30,7 @@ public class PaymentCollectionGenerator {
 	public static Payment createBasicTestPaymentWithoutId(){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
+				.id(UUID.randomUUID().toString())
 				.organisationId(UUID.randomUUID().toString())
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
@@ -40,7 +41,7 @@ public class PaymentCollectionGenerator {
 	public static Payment createBasicTestPayment(){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
-				.id(new ObjectId(new Date()))
+				.id(UUID.randomUUID().toString())
 				.organisationId(UUID.randomUUID().toString())
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
@@ -51,7 +52,7 @@ public class PaymentCollectionGenerator {
 	public static Payment createBasicTestPaymentWithOrganisationId(String organisationId){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
-				.id(new ObjectId(new Date()))
+				.id(UUID.randomUUID().toString())
 				.organisationId(organisationId)
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
