@@ -1,5 +1,7 @@
 package co.uk.f3.payment.model.domain;
 
+import java.util.UUID;
+
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
@@ -26,7 +28,8 @@ public class Payment {
 
 	@Id
 	@Field
-	private String id;
+	@Builder.Default
+	private String id = UUID.randomUUID().toString();
 
 	@Field(value = "ORGANISATION_ID")
 	private String organisationId;

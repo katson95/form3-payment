@@ -4,11 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Currency;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.UUID;
-
-import org.bson.types.ObjectId;
 
 import co.uk.f3.payment.model.domain.Attribute;
 import co.uk.f3.payment.model.domain.Charge;
@@ -30,33 +27,27 @@ public class PaymentCollectionGenerator {
 	public static Payment createBasicTestPaymentWithoutId(){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
-				.id(UUID.randomUUID().toString())
 				.organisationId(UUID.randomUUID().toString())
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
-				.version(0)
 				.build();
 	}
 	
 	public static Payment createBasicTestPayment(){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
-				.id(UUID.randomUUID().toString())
 				.organisationId(UUID.randomUUID().toString())
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
-				.version(0)
 				.build();
 	}
 	
 	public static Payment createBasicTestPaymentWithOrganisationId(String organisationId){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
-				.id(UUID.randomUUID().toString())
 				.organisationId(organisationId)
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
-				.version(0)
 				.build();
 	}
 	

@@ -33,14 +33,7 @@ public class PaymentServiceTest {
 	@Autowired
 	private IPaymentService underTest;
 
-//	@ClassRule
-//	public static DockerComposeRule docker = DockerComposeRule.builder().file("src/test/resources/docker-compose.yml")
-//			.build();
 
-	/**
-	 * Perform resource (e.g. database) initialisation operations before each test
-	 * is executed.
-	 */
 	@Before
 	public void startUp() {
 		mongoTemplate.dropCollection(Payment.class);
