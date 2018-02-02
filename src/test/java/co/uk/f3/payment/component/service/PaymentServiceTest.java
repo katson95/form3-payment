@@ -5,8 +5,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,68 +33,65 @@ public class PaymentServiceTest {
 	@Autowired
 	private IPaymentService underTest;
 
-
 	@Before
 	public void startUp() {
 		mongoTemplate.dropCollection(Payment.class);
 	}
 
-
 	@Test
-	public void createPayment_shouldReturnNewPayment() throws Exception {
+	public void saveOrUpdatePayment_shouldReturnNewlyCreatedPayment() throws Exception {
 
-		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+		Payment payment = PaymentCollectionGenerator.createBasicTestPayment();
 		Optional<Payment> savedPayment = underTest.saveOrUpdatePayment(payment);
 		assertNotNull(savedPayment.get());
 		assertNotNull(savedPayment.get().getId());
 	}
 
-
 	@Test
-	public void fetchPaymentByPaymentId_shouldReturnAlreadyPersitedPayment() throws Exception {
-		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+	public void fetchPaymentById_shouldReturnAlreadyPersitedPayment() throws Exception {
+		String id = UUID.randomUUID().toString();
+		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 		mongoTemplate.insert(payment);
 
-		String paymentId = mongoTemplate.findAll(Payment.class).get(0).getId().toString();
-		Optional<Payment> savedPayment = underTest.fetchPaymentById(paymentId);
+		Optional<Payment> savedPayment = underTest.fetchPaymentById(id);
 
 		assertNotNull(savedPayment.get().getId());
-		assertNotNull(savedPayment.get().getId().toString(), paymentId);
+		assertNotNull(savedPayment.get().getId().toString(), id);
 
 	}
 
 	@Test
 	public void updatePayment_shouldUpdateAndReturnExistingPayment() throws Exception {
-		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+		String id = UUID.randomUUID().toString();
+		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 		mongoTemplate.insert(payment);
 
-		Payment existingPayment = mongoTemplate.findAll(Payment.class).get(0);
-		assertNotNull(existingPayment.getId());
-		assertEquals(existingPayment.getVersion(), 0);
-		
+		Optional<Payment> existingPayment = Optional.of(mongoTemplate.findById(id, Payment.class));
+		assertNotNull(existingPayment.get().getId());
+		assertEquals(existingPayment.get().getVersion(), 0);
+
 		String organisationId = UUID.randomUUID().toString();
-		String paymentId = existingPayment.getId().toString();
-		existingPayment.setOrganisationId(organisationId);
+		existingPayment.get().setOrganisationId(organisationId);
 
+		Optional<Payment> updatedPayment = underTest.saveOrUpdatePayment(existingPayment.get());
 
-		Optional<Payment> updatedPayment = underTest.saveOrUpdatePayment(existingPayment);
-		
 		assertNotNull(updatedPayment.get().getId());
-		assertEquals(updatedPayment.get().getId().toString(), paymentId);
+		assertEquals(updatedPayment.get().getId().toString(), id);
+		assertEquals(updatedPayment.get().getOrganisationId().toString(), organisationId);
 		assertEquals(updatedPayment.get().getVersion(), 1);
 	}
 
 	@Test
 	public void fetchPayments_shouldReturnAllAlreadyCreatedPaymemts() throws Exception {
 
-		Payment p1 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
-		Payment p2 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
-		Payment p3 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
-		Payment p4 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+		Payment p1 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p2 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p3 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p4 = PaymentCollectionGenerator.createBasicTestPayment();
 
 		mongoTemplate.insert(new ArrayList<>(Arrays.asList(p1, p2, p3, p4)), Payment.class);
 
-		Set<Payment> payments = underTest.fetchPayments().stream().collect(Collectors.toSet());
+		List<Payment> payments = underTest.fetchPayments().stream().collect(Collectors.toList());
 
 		assertNotNull(payments);
 		assertEquals(payments.size(), 4);
@@ -102,21 +99,23 @@ public class PaymentServiceTest {
 
 	@Test
 	public void deletePayment_shouldDeletePaymentFromDatabaseAndReturnNothing() {
-		Payment payment = PaymentCollectionGenerator.createBasicTestPayment();
+		String id = UUID.randomUUID().toString();
+		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 		mongoTemplate.insert(payment);
 
-		Payment existingPayment = mongoTemplate.findAll(Payment.class).get(0);
-		String paymentId = existingPayment.getId().toString();
+		Payment existingPayment = mongoTemplate.findById(id, Payment.class);
+		String existingId = existingPayment.getId().toString();
 
-		assertNotNull(paymentId);
+		assertNotNull(existingId);
 		assertEquals(existingPayment.getVersion(), 0);
 
-		underTest.deletePaymentById(paymentId);
+		underTest.deletePaymentById(existingId);
 
-		Payment deletedPayment = mongoTemplate.findById(paymentId, Payment.class);
+		Payment deletedPayment = mongoTemplate.findById(existingId, Payment.class);
 		assertEquals(deletedPayment, null);
 
 	}
+	
 
 	@After
 	public void tearDown() {

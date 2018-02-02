@@ -29,10 +29,6 @@ public class PaymentRespositoryTest {
 	@Autowired
 	private IPaymentRepository underTest;
 
-//	@ClassRule
-//	public static DockerComposeRule docker = DockerComposeRule.builder().file("src/test/resources/docker-compose.yml")
-//			.build();
-
 	@Before
 	public void startUp() {
 		mongoTemplate.dropCollection(Payment.class);
@@ -41,10 +37,10 @@ public class PaymentRespositoryTest {
 	@Test
 	public void fetchPaymentById_shouldReturnExistingPayment() throws Exception {
 		
-		Payment p1 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
-		Payment p2 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
-		Payment p3 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
-		Payment p4 = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+		Payment p1 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p2 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p3 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment p4 = PaymentCollectionGenerator.createBasicTestPayment();
 
 		mongoTemplate.insert(new ArrayList<>(Arrays.asList(p1, p2, p3, p4)), Payment.class);
 		

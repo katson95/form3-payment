@@ -37,17 +37,18 @@ public class PaymentStepDefinition {
 	private MongoTemplate mongoTemplate;
 
 	@Given("^an organisation with id (.*) has made a payment$")
-	public void iCallGetOn(String id) throws Throwable {
-		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+	public void organisation_has_made_a_payment(String id) throws Throwable {
+		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 		mongoTemplate.insert(payment);
 
-		paymentId = mongoTemplate.findAll(Payment.class).get(0).getId().toString();
-		this.response = this.restTemplate.getForEntity("/payments/v1/" + paymentId, Payment.class);
+		Payment savedPayment = mongoTemplate.findById(id, Payment.class);
+		this.response = this.restTemplate.getForEntity("/payments/v1/" + savedPayment.getId(), Payment.class);
 	}
 
 	@When("^the organisation makes a request to the end point /payments/v1/ with its id$")
 	public void the_client_class_the_end_point_payments_with_its_documentId() throws Throwable {
 		Payment createdPayment = this.response.getBody();
+		this.paymentId = createdPayment.getId();
 		assertNotNull(createdPayment.getId().toString());
 	}
 

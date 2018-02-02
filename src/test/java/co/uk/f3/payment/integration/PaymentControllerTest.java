@@ -6,8 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,8 +27,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.CollectionUtils;
 
 import co.uk.f3.manager.PaymentCollectionGenerator;
+import co.uk.f3.payment.exception.handler.EntityNotFoundException;
 import co.uk.f3.payment.model.domain.Payment;
 
 @RunWith(SpringRunner.class)
@@ -41,99 +45,108 @@ public class PaymentControllerTest {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	// @ClassRule
-	// public static DockerComposeRule docker =
-	// DockerComposeRule.builder().file("src/test/resources/docker-compose.yml")
-	// .build();
-
 	@Before
 	public void startUp() {
 		mongoTemplate.dropCollection(Payment.class);
 	}
 
 	@Test
-	public void createPayment_shouldReturnNewPayment() throws Exception {
+	public void createPayment_shouldReturnNewPaymentResponseEntity() throws Exception {
 
-		Payment p = PaymentCollectionGenerator.createBasicTestPaymentWithoutId();
+		Payment p = PaymentCollectionGenerator.createBasicTestPayment();
 
 		ResponseEntity<Payment> entity = restTemplate.postForEntity("/payments/v1/", p, Payment.class);
 		Payment payment = entity.getBody();
 		assertEquals(HttpStatus.CREATED, entity.getStatusCode());
 		assertNotNull(payment.getId());
+		assertEquals(entity.getStatusCodeValue(), 201);
 
 	}
 
 	@Test
-	public void fetchPayments_shouldReturnAllPayments() throws Exception {
+	public void fetchPayments_shouldReturnAllPaymentResponseEntities() throws Exception {
 
 		Payment p1 = PaymentCollectionGenerator.createBasicTestPayment();
 		Payment p2 = PaymentCollectionGenerator.createBasicTestPayment();
 
 		mongoTemplate.insert(new ArrayList<>(Arrays.asList(p1, p2)), Payment.class);
 
-		ResponseEntity<Set<Resource<Payment>>> responseDocument = restTemplate.exchange("/payments/v1/", HttpMethod.GET,
+		ResponseEntity<Set<Resource<Payment>>> responseEntities = restTemplate.exchange("/payments/v1/", HttpMethod.GET,
 				null, new ParameterizedTypeReference<Set<Resource<Payment>>>() {
 				}, Collections.emptyMap());
-
-		assertEquals(responseDocument.getStatusCode(), HttpStatus.OK);
-		assertEquals(2, responseDocument.getBody().size());
+		List<Resource<Payment>> payments = responseEntities.getBody().stream().collect(Collectors.toList());
+		assertEquals(responseEntities.getStatusCode(), HttpStatus.OK);
+		assertEquals(responseEntities.getBody().size(), 2);
+		assertEquals(responseEntities.getStatusCodeValue(), 200);
+		assertEquals(CollectionUtils.isEmpty(payments), false);
 	}
 
 	@Test
-	public void fetchPaymentById_shouldReturnPaymentBydocumentId() throws Exception {
+	public void fetchPaymentById_shouldReturnExistingPaymentResponseEntity() throws Exception {
 
-		String organisationId = UUID.randomUUID().toString();
+		String id = UUID.randomUUID().toString();
 
-		Payment p = PaymentCollectionGenerator.createBasicTestPaymentWithOrganisationId(organisationId);
+		Payment p = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 
 		mongoTemplate.insert(p);
 
-		Payment payment = mongoTemplate.findAll(Payment.class).get(0);
-		String paymentId = payment.getId().toString();
+		Payment payment = mongoTemplate.findById(id, Payment.class);
 
-		ResponseEntity<Payment> paymentDocument = restTemplate.getForEntity("/payments/v1/" + paymentId, Payment.class);
+		ResponseEntity<Payment> paymentDocument = restTemplate.getForEntity("/payments/v1/" + id, Payment.class);
 
 		assertNotNull(payment.getId().toString());
-		assertEquals(payment.getOrganisationId(), paymentDocument.getBody().getOrganisationId());
+		assertEquals(paymentDocument.getBody().getId(), id);
 	}
 
 	@Test
-	public void updatePayment_shouldUpdateAndReturnSelectedPayment() throws Exception {
-
-		Payment p = PaymentCollectionGenerator.createBasicTestPayment();
+	public void updatePayment_shouldUpdateAndSelectedPayment() throws Exception {
+		String id = UUID.randomUUID().toString();
+		Payment p = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 
 		mongoTemplate.insert(p);
 
-		Payment toBeUpdatedPayment = mongoTemplate.findAll(Payment.class).get(0);
+		Payment toBeUpdatedPayment = mongoTemplate.findById(id, Payment.class);
 
 		String organisationId = UUID.randomUUID().toString();
-
-		String paymentId = toBeUpdatedPayment.getId().toString();
 
 		toBeUpdatedPayment.setOrganisationId(organisationId);
 
-		restTemplate.put("/payments/v1/" + paymentId, toBeUpdatedPayment, Payment.class);
+		restTemplate.put("/payments/v1/" + id, toBeUpdatedPayment, Payment.class);
 
-		Payment updatedDocument = mongoTemplate.findAll(Payment.class).get(0);
-
+		Payment updatedDocument = mongoTemplate.findById(id, Payment.class);
 		assertNotNull(updatedDocument);
-		assertEquals(updatedDocument.getId().toString(), paymentId);
+		assertEquals(updatedDocument.getId(), id);
 		assertEquals(updatedDocument.getOrganisationId(), organisationId);
 	}
 
 	@Test
-	public void deletePaymentBydocumentId_shouldDeletePaymentSelectedPayment() throws Exception {
-
-		Payment payment = PaymentCollectionGenerator.createBasicTestPayment();
+	public void deletePaymentById_shouldDeleteSelectedPayment() throws Exception {
+		String id = UUID.randomUUID().toString();
+		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 
 		mongoTemplate.insert(payment);
 
-		Payment existingPayment = mongoTemplate.findAll(Payment.class).get(0);
-		String documentId = existingPayment.getId().toString();
+		Payment toBeDeletedPayment = mongoTemplate.findById(id, Payment.class);
+		assertNotNull(toBeDeletedPayment.getId());
 
-		restTemplate.delete("/payments/v1/" + documentId);
+		restTemplate.delete("/payments/v1/" + toBeDeletedPayment.getId());
 
-		assertEquals(mongoTemplate.findAll(Payment.class), Collections.emptyList());
+		Payment deletedPayment = mongoTemplate.findById(id, Payment.class);
+		assertEquals(deletedPayment, null);
+
+	}
+
+	@Test
+	public void findPaymentById_ShouldThrowEntityNotFoundExceptionForUnknownPayment() throws EntityNotFoundException {
+		String id = UUID.randomUUID().toString();
+		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
+		mongoTemplate.insert(payment);
+		
+		Payment toBeDeletedPayment = mongoTemplate.findById(id, Payment.class);
+
+		mongoTemplate.remove(toBeDeletedPayment);
+
+		restTemplate.getForEntity("/payments/v1/" + id, Payment.class);
 
 	}
 

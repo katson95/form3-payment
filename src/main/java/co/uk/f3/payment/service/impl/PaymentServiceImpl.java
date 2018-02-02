@@ -29,7 +29,11 @@ public class PaymentServiceImpl implements IPaymentService {
 
 	@Override
 	public Optional<Payment> saveOrUpdatePayment(Payment payment) {
-		return Optional.of(paymentRepository.save(payment));
+		Optional<Payment> existingPayment = paymentRepository.findById(payment.getId());
+		if(existingPayment.isPresent()) {
+			return Optional.of(paymentRepository.save(payment));
+		}
+		return Optional.of(paymentRepository.insert(payment));
 	}
 
 	@Override

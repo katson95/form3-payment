@@ -2,7 +2,6 @@ package co.uk.f3.payment.controller;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,8 +86,8 @@ public class PaymentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ResponseEntity<Set<Payment>> fetchpayment() {
-		Set<Payment> payments = paymentService.fetchPayments().stream().collect(Collectors.toSet());
+	public ResponseEntity<Set<Payment>> fetchpayments() {
+		Set<Payment> payments = paymentService.fetchPayments();
 
 		if (payments.isEmpty()) {
 			return new ResponseEntity<Set<Payment>>(HttpStatus.NO_CONTENT);

@@ -24,9 +24,10 @@ import co.uk.f3.payment.utils.enums.SchemePaymentType;
 
 public class PaymentCollectionGenerator {
 
-	public static Payment createBasicTestPaymentWithoutId(){
+	public static Payment createBasicTestPaymentWithId(String id){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
+				.id(id)
 				.organisationId(UUID.randomUUID().toString())
 				.attribute(attribute)
 				.type(ResourceType.PAYMENT)
