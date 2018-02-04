@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +31,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 
-import co.uk.f3.manager.PaymentCollectionGenerator;
-import co.uk.f3.payment.exception.handler.EntityNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import co.uk.f3.payment.exception.handler.DocumentNotFoundException;
 import co.uk.f3.payment.model.domain.Payment;
+import co.uk.f3.payment.unit.service.PaymentServiceTest;
+import co.uk.f3.utils.PaymentCollectionGenerator;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -41,7 +46,7 @@ public class PaymentControllerTest {
 
 	@Autowired
 	private TestRestTemplate restTemplate;
-
+	
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
@@ -51,15 +56,34 @@ public class PaymentControllerTest {
 	}
 
 	@Test
+	public void savePayment_shouldReturnNewPaymentResponseEntity() throws Exception {
+		JSONObject paymentInput = new JSONObject(
+				new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/data/payment.json")));
+
+		ObjectMapper mapper = new ObjectMapper();
+		Payment payment = mapper.readValue(paymentInput.toString(), Payment.class);
+		
+		LOGGER.info(payment.toString());
+		
+		
+
+//		ResponseEntity<Payment> entity = restTemplate.postForEntity("/payments/v1/", p, Payment.class);
+//		Payment payment = entity.getBody();
+//		assertEquals(HttpStatus.CREATED, entity.getStatusCode());
+//		assertNotNull(payment.getId());
+//		assertEquals(entity.getStatusCodeValue(), 201);
+
+	}
+	
+	@Test
 	public void createPayment_shouldReturnNewPaymentResponseEntity() throws Exception {
 
 		Payment p = PaymentCollectionGenerator.createBasicTestPayment();
 
-		ResponseEntity<Payment> entity = restTemplate.postForEntity("/payments/v1/", p, Payment.class);
-		Payment payment = entity.getBody();
-		assertEquals(HttpStatus.CREATED, entity.getStatusCode());
-		assertNotNull(payment.getId());
-		assertEquals(entity.getStatusCodeValue(), 201);
+		ResponseEntity<Payment> document = restTemplate.postForEntity("/payments/v1/", p, Payment.class);
+		assertEquals(HttpStatus.CREATED, document.getStatusCode());
+		assertNotNull(document.getBody().getId());
+		assertEquals(document.getStatusCodeValue(), 201);
 
 	}
 
@@ -85,17 +109,16 @@ public class PaymentControllerTest {
 	public void fetchPaymentById_shouldReturnExistingPaymentResponseEntity() throws Exception {
 
 		String id = UUID.randomUUID().toString();
-
-		Payment p = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
+		String organisationId = UUID.randomUUID().toString();
+		
+		Payment p = PaymentCollectionGenerator.createBasicTestPaymentWithOrganisationId(id, organisationId);
 
 		mongoTemplate.insert(p);
 
-		Payment payment = mongoTemplate.findById(id, Payment.class);
-
 		ResponseEntity<Payment> paymentDocument = restTemplate.getForEntity("/payments/v1/" + id, Payment.class);
 
-		assertNotNull(payment.getId().toString());
-		assertEquals(paymentDocument.getBody().getId(), id);
+		assertNotNull(paymentDocument.getBody().getId());
+		assertEquals(paymentDocument.getBody().getOrganisationId(), organisationId);
 	}
 
 	@Test
@@ -137,7 +160,7 @@ public class PaymentControllerTest {
 	}
 
 	@Test
-	public void findPaymentById_ShouldThrowEntityNotFoundExceptionForUnknownPayment() throws EntityNotFoundException {
+	public void findPaymentById_ShouldThrowEntityNotFoundExceptionForUnknownPayment() throws DocumentNotFoundException {
 		String id = UUID.randomUUID().toString();
 		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 		mongoTemplate.insert(payment);

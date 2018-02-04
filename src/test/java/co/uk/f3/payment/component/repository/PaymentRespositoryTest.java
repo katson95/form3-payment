@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,9 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import co.uk.f3.manager.PaymentCollectionGenerator;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.repository.IPaymentRepository;
+import co.uk.f3.utils.PaymentCollectionGenerator;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -46,10 +45,10 @@ public class PaymentRespositoryTest {
 		
 		String paymentId = mongoTemplate.findAll(Payment.class).get(0).getId().toString();
 
-		Optional<Payment> savedPayment = underTest.findById(paymentId);
+		Payment savedPayment = underTest.findOne(paymentId);
 
-		assertNotNull(savedPayment.get().getId());
-		assertNotNull(savedPayment.get().getId().toString(), paymentId);
+		assertNotNull(savedPayment.getId());
+		assertNotNull(savedPayment.getId().toString(), paymentId);
 	}
 
 	@After

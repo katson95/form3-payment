@@ -28,18 +28,19 @@ public class PaymentServiceImpl implements IPaymentService {
 	}
 
 	@Override
-	public Optional<Payment> saveOrUpdatePayment(Payment payment) {
-		Optional<Payment> existingPayment = paymentRepository.findById(payment.getId());
-		if(existingPayment.isPresent()) {
-			return Optional.of(paymentRepository.save(payment));
-		}
+	public Optional<Payment> savePayment(Payment payment) {
 		return Optional.of(paymentRepository.insert(payment));
+	}
+
+	@Override
+	public Optional<Payment> updatePayment(Payment payment) {
+		return Optional.of(paymentRepository.save(payment));
 	}
 
 	@Override
 	public Optional<Payment> fetchPaymentById(String id) {
 		LOGGER.info(id);
-		return paymentRepository.findById(id);
+		return Optional.of(paymentRepository.findOne(id));
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class PaymentServiceImpl implements IPaymentService {
 
 	@Override
 	public void deletePaymentById(String id) {
-		paymentRepository.deleteById(id);
+		paymentRepository.delete(id);
 
 	}
 

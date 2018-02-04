@@ -20,30 +20,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import co.uk.f3.payment.exception.handler.EntityNotFoundException;
+import co.uk.f3.payment.exception.handler.DocumentNotFoundException;
 import co.uk.f3.payment.exception.handler.InvalidRequestException;
 import co.uk.f3.payment.exception.message.ErrorInfo;
 import co.uk.f3.payment.exception.message.ErrorResource;
 import co.uk.f3.payment.exception.message.FieldErrorDTO;
 import co.uk.f3.payment.exception.message.FieldErrorResource;
 
-
-
-
-
 @ControllerAdvice
-public class RestExceptionProcessor extends ResponseEntityExceptionHandler{
+public class RestExceptionProcessor extends ResponseEntityExceptionHandler {
 
 	@Autowired
 	private MessageSource messageSource;
 
-	@ExceptionHandler(EntityNotFoundException.class)
+	@ExceptionHandler(DocumentNotFoundException.class)
 	@ResponseBody
-	public ResponseEntity<ErrorInfo> userNotFound(HttpServletRequest req, EntityNotFoundException ex) {
+	public ResponseEntity<ErrorInfo> userNotFound(HttpServletRequest req, DocumentNotFoundException ex) {
 
-		String errorMessage = localizeErrorMessage("");
-
-		errorMessage += ex.getEntityId();
+		String errorMessage = "";
+		errorMessage = "Payment with id: " + ex.getDocumentId() + " does not exist!";
 		String errorURL = req.getRequestURL().toString();
 		ErrorInfo errorInfor = new ErrorInfo(errorURL, errorMessage);
 		return new ResponseEntity<ErrorInfo>(errorInfor, HttpStatus.NOT_FOUND);
@@ -73,11 +68,10 @@ public class RestExceptionProcessor extends ResponseEntityExceptionHandler{
 		return handleExceptionInternal(e, error, headers, HttpStatus.UNPROCESSABLE_ENTITY, request);
 	}
 
-	
 	/**
 	 * Method populates {@link List} of {@link FieldErrorDTO} objects. Each list
-	 * item contains localized error message and name of a form field which
-	 * caused the exception. Use the {@link #localizeErrorMessage(String)
+	 * item contains localized error message and name of a form field which caused
+	 * the exception. Use the {@link #localizeErrorMessage(String)
 	 * localizeErrorMessage} method.
 	 * 
 	 * @param fieldErrorList
@@ -115,6 +109,5 @@ public class RestExceptionProcessor extends ResponseEntityExceptionHandler{
 		String errorMessage = messageSource.getMessage(errorCode, null, locale);
 		return errorMessage;
 	}
-
 
 }

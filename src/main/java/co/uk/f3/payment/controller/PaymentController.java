@@ -6,6 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.uk.f3.payment.exception.handler.EntityNotFoundException;
+import co.uk.f3.payment.exception.handler.DocumentNotFoundException;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.service.IPaymentService;
 
@@ -36,11 +37,17 @@ public class PaymentController {
 	 * @param PaymentDTO
 	 * @return
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public ResponseEntity<?> createPayment(@Validated @RequestBody Payment payment) {
+	@RequestMapping(value = "/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Payment> createPayment(@Validated @RequestBody Payment payment) {
 		LOGGER.info("Creating new PaymentDTO: {}");
-		Optional<Payment> paymentValue = paymentService.saveOrUpdatePayment(payment);
-		return new ResponseEntity<Payment>(paymentValue.get(), HttpStatus.CREATED);
+		try {
+			//PaymentValidator.validateINput(payment);
+			Optional<Payment> paymentValue = paymentService.savePayment(payment);
+			return new ResponseEntity<Payment>(paymentValue.get(), HttpStatus.CREATED);
+		} catch (Exception ex) {
+			throw new DocumentNotFoundException("BIMBO!!");
+		}
+
 	}
 
 	/**
@@ -55,7 +62,7 @@ public class PaymentController {
 		Optional<Payment> optionalPayment = paymentService.fetchPaymentById(id);
 		if (!optionalPayment.isPresent()) {
 			LOGGER.error("Payment with id {} not found.", id);
-			throw new EntityNotFoundException(id);
+			throw new DocumentNotFoundException(id);
 		}
 
 		Payment paymentValue = optionalPayment.get();
@@ -71,10 +78,9 @@ public class PaymentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<?> updatePayment(@PathVariable("id") String id,
-			@RequestBody Payment payment) {
+	public ResponseEntity<?> updatePayment(@PathVariable("id") String id, @RequestBody Payment payment) {
 		LOGGER.info("Updating Payment with id: {}", id);
-		Optional<Payment> paymentValue = paymentService.saveOrUpdatePayment(payment);
+		Optional<Payment> paymentValue = paymentService.updatePayment(payment);
 
 		return new ResponseEntity<Payment>(paymentValue.get(), HttpStatus.OK);
 

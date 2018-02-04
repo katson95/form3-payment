@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '2.0.0.M7'
+		springBootVersion = '1.5.10.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -16,7 +16,7 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
+
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: org.springframework.boot.gradle.plugin.SpringBootPlugin
@@ -24,7 +24,7 @@ apply plugin: 'com.github.samueltbrown.cucumber'
 apply plugin: 'docker-compose'
 
 dockerCompose.isRequiredBy(test)
-
+dockerCompose.isRequiredBy(tasks.cucumber)
 
 jar {
     baseName = 'f3-payment-service'
@@ -51,18 +51,23 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')	
 	runtime('org.springframework.data:spring-data-mongodb')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-mongodb')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('com.fasterxml.jackson.core:jackson-databind')
 	compile('com.fasterxml.jackson.core:jackson-core')
 	compile('com.fasterxml.jackson.core:jackson-annotations')
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+	compile('org.springframework.hateoas:spring-hateoas:0.24.0.RELEASE')	
 	
 	compile('io.springfox:springfox-swagger2:2.6.1')
 	compile('io.springfox:springfox-swagger-ui:2.6.1')
+	compile("com.github.java-json-tools:json-schema-validator:2.2.8");
+	compile("com.fasterxml.jackson.datatype:jackson-datatype-joda:2.0.2");
 	
-	compileOnly "org.projectlombok:lombok:1.16.16"
+	compile group: 'com.github.fge', name: 'jackson-coreutils', version: '1.0'
+    compile group: 'org.everit.json', name: 'org.everit.json.schema', version: '1.5.1'
+	
+	
+	compileOnly "org.projectlombok:lombok"
 	
         
     testCompile 'info.cukes:cucumber-java:1.2.5'
@@ -74,17 +79,23 @@ dependencies {
 	
 }
 
-task cucumber(overwrite: true) {
 
-    dependsOn assemble, compileTestJava
-    doLast {
-        javaexec {
-            main = "cucumber.api.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ['--plugin', 'pretty', '--glue', 'co.uk.f3.payment.e2e', 'src/test/resources/features']
-        }
+cucumber {
+    formats = ['pretty','json:build/cucumber.json']
+    glueDirs = ['src/cucumber/java', 'classpath:co.uk.f3.payment.e2e']
+    featureDirs = [ 'src/cucumber/resources/features' ]
+    monochrome = false
+    strict = true
+    dryRun = false
+    ignoreFailures = false
+
+    jvmOptions {
+      maxHeapSize = '512m'
+      environment 'ENV', 'staging'
     }
 }
+
+
 
 test {
     testLogging.showStandardStreams = true
@@ -93,10 +104,5 @@ test {
 
 dockerCompose {
   useComposeFiles = ['src/test/resources/docker-compose.yml']
-}
 
-dependencyManagement {
-  imports {
-    mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.M1'
-  }
 }

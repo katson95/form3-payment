@@ -1,9 +1,8 @@
-package co.uk.f3.manager;
+package co.uk.f3.utils;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -11,11 +10,9 @@ import co.uk.f3.payment.model.domain.Attribute;
 import co.uk.f3.payment.model.domain.Charge;
 import co.uk.f3.payment.model.domain.ChargesInformation;
 import co.uk.f3.payment.model.domain.Fx;
-import co.uk.f3.payment.model.domain.Money;
 import co.uk.f3.payment.model.domain.Party;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.utils.enums.AccountType;
-import co.uk.f3.payment.utils.enums.ChargeType;
 import co.uk.f3.payment.utils.enums.PartyType;
 import co.uk.f3.payment.utils.enums.PaymentType;
 import co.uk.f3.payment.utils.enums.ResourceType;
@@ -23,42 +20,37 @@ import co.uk.f3.payment.utils.enums.SchemePaymentType;
 
 
 public class PaymentCollectionGenerator {
-
-	public static Payment createBasicTestPaymentWithId(String id){
-		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
-		return Payment.builder()
-				.id(id)
-				.organisationId(UUID.randomUUID().toString())
-				.attribute(attribute)
-				.type(ResourceType.PAYMENT)
-				.build();
-	}
 	
 	public static Payment createBasicTestPayment(){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
 				.organisationId(UUID.randomUUID().toString())
-				.attribute(attribute)
-				.type(ResourceType.PAYMENT)
+				.attributes(attribute)
+				.type(ResourceType.Payment)
 				.build();
 	}
 	
-	public static Payment createBasicTestPaymentWithOrganisationId(String organisationId){
+	public static Payment createBasicTestPaymentWithId(String id){
 		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
 		return Payment.builder()
+				.id(id)
+				.organisationId(UUID.randomUUID().toString())
+				.attributes(attribute)
+				.type(ResourceType.Payment)
+				.build();
+	}
+	
+
+	public static Payment createBasicTestPaymentWithOrganisationId(String id, String organisationId){
+		Attribute attribute = PaymentCollectionGenerator.buildTestAttribute();
+		return Payment.builder()
+				.id(id)
 				.organisationId(organisationId)
-				.attribute(attribute)
-				.type(ResourceType.PAYMENT)
+				.attributes(attribute)
+				.type(ResourceType.Payment)
 				.build();
 	}
-	
-	
-	private static Money buildTestMoney(BigDecimal amount, String code) {
-		return Money.builder()
-				.amount(amount)
-				.currency(Currency.getInstance(code).toString())
-				.build();
-	}
+
 
 	private static Party buildTestBeneficiaryParty(PartyType type) {
 		return Party.builder()
@@ -97,28 +89,27 @@ public class PaymentCollectionGenerator {
 				.build();
 	}
 	
-	private static Charge buildTestCharge(ChargeType type, BigDecimal amount, String currencyCode) {
-		Money fund = buildTestMoney(amount, currencyCode);
+	private static Charge buildTestCharge(BigDecimal amount, String currencyCode) {
 		return Charge.builder()
-				.chargeType(type)
-				.fund(fund)
+				.amount(new BigDecimal("100.21"))
+				.currency("GBP")
 				.build();
 		
 	}
 	
 	private static Fx buildTestFx() {
-		Money fund = buildTestMoney(new BigDecimal("200.42"), "USD");
 		return Fx.builder()
 				.contractReference("FX123")
 				.exchangeRate("2.00000")
-				.originalFund(fund)
+				.amount(new BigDecimal("100.21"))
+				.currency("GBP")
 				.build();
 	}
 	
 	private static ChargesInformation buildTestChargesInformation() {
-		Charge senderCharge1 = buildTestCharge(ChargeType.SENDER_CHARGE, new BigDecimal("5.00"), "GBP");
-		Charge senderCharge2 = buildTestCharge(ChargeType.SENDER_CHARGE, new BigDecimal("10.00"), "USD");
-		Charge receivererCharge = buildTestCharge(ChargeType.RECEIVER_CHARGE, new BigDecimal("1.00"), "GBP");
+		Charge senderCharge1 = buildTestCharge(new BigDecimal("5.00"), "GBP");
+		Charge senderCharge2 = buildTestCharge(new BigDecimal("10.00"), "USD");
+		Charge receivererCharge = buildTestCharge(new BigDecimal("1.00"), "GBP");
 		return ChargesInformation.builder()
 				.bearerCode("SHAR")
 				.charges(new HashSet<>(Arrays.asList(senderCharge1, senderCharge2, receivererCharge)))
@@ -143,11 +134,11 @@ public class PaymentCollectionGenerator {
 				.paymentId("123456789012345678")
 				.paymentPurpose("Paying for goods/services")
 				.paymentScheme("FPS")
-				.paymentType(PaymentType.CREDIT)
-				.processingDate(LocalDateTime.now())
+				.paymentType(PaymentType.Credit)
+				.processingDate(LocalDate.now())
 				.reference("Payment for Em's piano lessons")
-				.schemePaymentSubType(SchemePaymentType.INTERNET_BANKING)
-				.schemePaymentType(SchemePaymentType.IMMEDIATE_PAYMENT)
+				.schemePaymentSubType(SchemePaymentType.InternetBanking)
+				.schemePaymentType(SchemePaymentType.ImmediatePayment)
 				.sponsorParty(sponsorParty)
 				.build();
 	}

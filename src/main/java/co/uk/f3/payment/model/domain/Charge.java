@@ -1,12 +1,10 @@
 package co.uk.f3.payment.model.domain;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import java.math.BigDecimal;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import co.uk.f3.payment.utils.enums.ChargeType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,12 +19,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Document(collection = "CHARGE")
 public class Charge {
-
-	@Field(value = "CHARGE_TYPE")
-	@Enumerated(EnumType.STRING)
-	private ChargeType chargeType;
-
-	@Field(value = "FUND")
-	private Money fund;
+	
+	@Field(value = "AMOUNT")
+	private BigDecimal amount;
+	
+	@Field(value = "CURRENCY")
+	private String currency;
 
 }

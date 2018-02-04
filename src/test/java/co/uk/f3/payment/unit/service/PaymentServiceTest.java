@@ -15,6 +15,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -25,16 +30,20 @@ import org.slf4j.LoggerFactory;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.repository.IPaymentRepository;
 import co.uk.f3.payment.service.impl.PaymentServiceImpl;
-import co.uk.f3.payment.utils.enums.ResourceType;
+import co.uk.f3.payment.utils.validators.PaymentValidator;
+import co.uk.f3.utils.PaymentCollectionGenerator;
 
 public class PaymentServiceTest {
-	
+
 	public static final Logger LOGGER = LoggerFactory.getLogger(PaymentServiceTest.class);
 
 	private PaymentServiceImpl underTest;
 
 	@Mock
-    private Payment payment;
+	private Payment payment;
+	
+	@Mock
+	private PaymentValidator paymentValidator;
 
 	@Mock
 	private IPaymentRepository paymentRepository;
@@ -48,29 +57,28 @@ public class PaymentServiceTest {
 
 	@Test
 	public void saveOrUpdatePayment_shouldReturnNewOrUpdatedPayment() throws Exception {
-
-		when(paymentRepository.save(payment)).thenReturn(payment);
-		Optional<Payment> savedPayment = underTest.saveOrUpdatePayment(payment);
+		when(paymentRepository.insert(payment)).thenReturn(payment);
+		Optional<Payment> savedPayment = underTest.savePayment(payment);
 		assertThat(savedPayment.get(), is(equalTo(payment)));
 
 	}
+	
 
 	@Test
 	public void fetchPaymentBypaymentId_shouldReturnPayment() throws Exception {
 		String id = UUID.randomUUID().toString();
-		Payment payment = Payment.builder().type(ResourceType.PAYMENT).id(id).build();
+		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 
 		Optional<Payment> paymentValue = Optional.of(payment);
-
-		when(underTest.fetchPaymentById(id.toString())).thenReturn(paymentValue);
+		when(paymentRepository.findOne(payment.getId().toString())).thenReturn(paymentValue.get());
+		
+		when(underTest.fetchPaymentById(payment.getId().toString())).thenReturn(paymentValue);
 	}
 
 	@Test
 	public void fetchPayments_shouldReturnAllPayments() throws Exception {
-		Payment payment1 = Payment.builder().type(ResourceType.PAYMENT).id(UUID.randomUUID().toString())
-				.build();
-		Payment payment2 = Payment.builder().type(ResourceType.PAYMENT).id(UUID.randomUUID().toString())
-				.build();
+		Payment payment1 = PaymentCollectionGenerator.createBasicTestPayment();
+		Payment payment2 = PaymentCollectionGenerator.createBasicTestPayment();
 
 		List<Payment> payments = new ArrayList<>(Arrays.asList(payment1, payment2));
 
@@ -80,12 +88,33 @@ public class PaymentServiceTest {
 
 	@Test
 	public void deletePayment_shouldDeletePaymentById() throws Exception {
-		String paymentId = UUID.randomUUID().toString();
-		doNothing().when(paymentRepository).deleteById(paymentId);
+		String id = UUID.randomUUID().toString();
+		doNothing().when(paymentRepository).delete(id);
 
-		underTest.deletePaymentById(paymentId);
+		underTest.deletePaymentById(id);
 
-		verify(paymentRepository, times(1)).deleteById(paymentId);
+		verify(paymentRepository, times(1)).delete(id);
 
 	}
+
+	@Test
+	public void ValidPaymentInput_shouldNotThrowValidationExceptionWhenPaymentIsInvalid() throws ValidationException {
+		JSONObject jsonSchema = new JSONObject(
+				new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/schema/schema.json")));
+		JSONObject jsonSubject = new JSONObject(
+				new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/data/payment.json")));
+
+		Schema schema = SchemaLoader.load(jsonSchema);
+		schema.validate(jsonSubject);
+	}
+	
+    @Test(expected = ValidationException.class)
+    public void ValidPaymentInput_shouldThrowValidationExceptionWhenPaymentIsInvalid() {
+
+        JSONObject jsonSchema = new JSONObject(new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/schema/schema.json")));
+        JSONObject jsonSubject = new JSONObject(new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/data/invalid_payment.json")));
+
+        Schema schema = SchemaLoader.load(jsonSchema);
+        schema.validate(jsonSubject);
+    }
 }

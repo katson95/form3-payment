@@ -7,7 +7,9 @@ import co.uk.f3.payment.model.domain.Payment;
 
 public interface IPaymentService {
 
-	public Optional<Payment> saveOrUpdatePayment(Payment payment);
+	public Optional<Payment> savePayment(Payment payment);
+	
+	public Optional<Payment> updatePayment(Payment payment);
 
 	public Optional<Payment> fetchPaymentById(String id);
 

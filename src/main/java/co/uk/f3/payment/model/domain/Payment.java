@@ -2,13 +2,12 @@ package co.uk.f3.payment.model.domain;
 
 import java.util.UUID;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import co.uk.f3.payment.utils.enums.ResourceType;
 import lombok.AccessLevel;
@@ -28,18 +27,19 @@ public class Payment {
 
 	@Id
 	@Field
+	@JsonProperty("id")
 	@Builder.Default
 	private String id = UUID.randomUUID().toString();
 
 	@Field(value = "ORGANISATION_ID")
+	@JsonProperty("organisation_id")
 	private String organisationId;
 
 	@Field(value = "TYPE")
-	@Enumerated(EnumType.STRING)
 	private ResourceType type;
 
 	@Field(value = "ATTRIBUTE")
-	private Attribute attribute;
+	private Attribute attributes;
 
 	@Field(value = "VERSION")
 	@Version()

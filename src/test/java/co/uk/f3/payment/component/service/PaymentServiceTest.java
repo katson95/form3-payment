@@ -19,9 +19,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import co.uk.f3.manager.PaymentCollectionGenerator;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.service.IPaymentService;
+import co.uk.f3.utils.PaymentCollectionGenerator;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -42,7 +42,7 @@ public class PaymentServiceTest {
 	public void saveOrUpdatePayment_shouldReturnNewlyCreatedPayment() throws Exception {
 
 		Payment payment = PaymentCollectionGenerator.createBasicTestPayment();
-		Optional<Payment> savedPayment = underTest.saveOrUpdatePayment(payment);
+		Optional<Payment> savedPayment = underTest.savePayment(payment);
 		assertNotNull(savedPayment.get());
 		assertNotNull(savedPayment.get().getId());
 	}
@@ -73,7 +73,7 @@ public class PaymentServiceTest {
 		String organisationId = UUID.randomUUID().toString();
 		existingPayment.get().setOrganisationId(organisationId);
 
-		Optional<Payment> updatedPayment = underTest.saveOrUpdatePayment(existingPayment.get());
+		Optional<Payment> updatedPayment = underTest.updatePayment(existingPayment.get());
 
 		assertNotNull(updatedPayment.get().getId());
 		assertEquals(updatedPayment.get().getId().toString(), id);
