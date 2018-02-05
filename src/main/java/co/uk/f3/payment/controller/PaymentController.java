@@ -16,9 +16,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.uk.f3.payment.exception.handler.DocumentNotFoundException;
+import co.uk.f3.payment.exception.handler.InvalidRequestException;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.service.IPaymentService;
 
+/**
+ * Class (Controller) to allow execution of service operations by Client.
+ * 
+ * @author Nissi Tafie
+ *
+ */
 @RestController
 @RequestMapping(value = "/payments/v1")
 public class PaymentController {
@@ -34,18 +41,18 @@ public class PaymentController {
 	/**
 	 * Operation (Method) to create new PaymentDTO
 	 * 
-	 * @param PaymentDTO
-	 * @return
+	 * @param to
+	 *            be persisted payment
+	 * @return created Payment
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Payment> createPayment(@Validated @RequestBody Payment payment) {
-		LOGGER.info("Creating new PaymentDTO: {}");
+		LOGGER.info("Creating new Payment: {}");
 		try {
-			//PaymentValidator.validateINput(payment);
 			Optional<Payment> paymentValue = paymentService.savePayment(payment);
 			return new ResponseEntity<Payment>(paymentValue.get(), HttpStatus.CREATED);
 		} catch (Exception ex) {
-			throw new DocumentNotFoundException("BIMBO!!");
+			throw new InvalidRequestException(ex.getMessage());
 		}
 
 	}
@@ -54,7 +61,8 @@ public class PaymentController {
 	 * Operation (Method) to create fetch Payment by id
 	 * 
 	 * @param id
-	 * @return
+	 *            of payment to be fetched
+	 * @return fetched payment
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> fetchPaymentById(@PathVariable("id") String id) {
@@ -74,8 +82,10 @@ public class PaymentController {
 	 * Operation (Method) for updating Payment.
 	 * 
 	 * @param id
-	 * @param Payment
-	 * @return
+	 *            of payment to be fetched
+	 * @param payment
+	 *            to be updated
+	 * @return updated payment
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<?> updatePayment(@PathVariable("id") String id, @RequestBody Payment payment) {
@@ -89,7 +99,7 @@ public class PaymentController {
 	/**
 	 * Operation (Method) to fetch all Payments.
 	 * 
-	 * @return
+	 * @return list of existing payments
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<Set<Payment>> fetchpayments() {
@@ -105,13 +115,16 @@ public class PaymentController {
 	 * Operation (Method) to delete Payment.
 	 * 
 	 * @param id
-	 * @return
+	 *            of payment to be deleted
+	 * @return operation outcome
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> deletePaymentByid(@PathVariable("id") String id) {
-		paymentService.deletePaymentById(id);
-
-		return new ResponseEntity<Void>(HttpStatus.OK);
+	public ResponseEntity<Void> deletePaymentById(@PathVariable("id") String id) {
+		if (paymentService.deletePaymentById(id)) {
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		}
+		LOGGER.error("Payment with id {} not found.", id);
+		throw new DocumentNotFoundException(id);
 	}
 
 }

@@ -6,9 +6,8 @@ public class InvalidRequestException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	private Errors errors;
 
-	public InvalidRequestException(String message, Errors errors) {
+	public InvalidRequestException(String message) {
 		super(message);
-		this.errors = errors;
 	}
 
 	public Errors getErrors() {

@@ -3,9 +3,6 @@ package co.uk.f3.payment.unit.service;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -30,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.repository.IPaymentRepository;
 import co.uk.f3.payment.service.impl.PaymentServiceImpl;
-import co.uk.f3.payment.utils.validators.PaymentValidator;
 import co.uk.f3.utils.PaymentCollectionGenerator;
 
 public class PaymentServiceTest {
@@ -41,9 +37,7 @@ public class PaymentServiceTest {
 
 	@Mock
 	private Payment payment;
-	
-	@Mock
-	private PaymentValidator paymentValidator;
+
 
 	@Mock
 	private IPaymentRepository paymentRepository;
@@ -62,7 +56,6 @@ public class PaymentServiceTest {
 		assertThat(savedPayment.get(), is(equalTo(payment)));
 
 	}
-	
 
 	@Test
 	public void fetchPaymentBypaymentId_shouldReturnPayment() throws Exception {
@@ -71,8 +64,9 @@ public class PaymentServiceTest {
 
 		Optional<Payment> paymentValue = Optional.of(payment);
 		when(paymentRepository.findOne(payment.getId().toString())).thenReturn(paymentValue.get());
-		
-		when(underTest.fetchPaymentById(payment.getId().toString())).thenReturn(paymentValue);
+		when(paymentRepository.exists(payment.getId().toString())).thenReturn(true);
+
+		when(underTest.fetchPaymentById(payment.getId())).thenReturn(paymentValue);
 	}
 
 	@Test
@@ -89,11 +83,8 @@ public class PaymentServiceTest {
 	@Test
 	public void deletePayment_shouldDeletePaymentById() throws Exception {
 		String id = UUID.randomUUID().toString();
-		doNothing().when(paymentRepository).delete(id);
-
-		underTest.deletePaymentById(id);
-
-		verify(paymentRepository, times(1)).delete(id);
+		when(paymentRepository.exists(id)).thenReturn(true);
+		when(underTest.deletePaymentById(payment.getId())).thenReturn(true);
 
 	}
 
@@ -107,14 +98,16 @@ public class PaymentServiceTest {
 		Schema schema = SchemaLoader.load(jsonSchema);
 		schema.validate(jsonSubject);
 	}
-	
-    @Test(expected = ValidationException.class)
-    public void ValidPaymentInput_shouldThrowValidationExceptionWhenPaymentIsInvalid() {
 
-        JSONObject jsonSchema = new JSONObject(new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/schema/schema.json")));
-        JSONObject jsonSubject = new JSONObject(new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/data/invalid_payment.json")));
+	@Test(expected = ValidationException.class)
+	public void ValidPaymentInput_shouldThrowValidationExceptionWhenPaymentIsInvalid() {
 
-        Schema schema = SchemaLoader.load(jsonSchema);
-        schema.validate(jsonSubject);
-    }
+		JSONObject jsonSchema = new JSONObject(
+				new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/schema/schema.json")));
+		JSONObject jsonSubject = new JSONObject(
+				new JSONTokener(PaymentServiceTest.class.getResourceAsStream("/validation/data/invalid_payment.json")));
+
+		Schema schema = SchemaLoader.load(jsonSchema);
+		schema.validate(jsonSubject);
+	}
 }

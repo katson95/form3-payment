@@ -1,11 +1,9 @@
 package co.uk.f3.payment.utils.validators;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
 import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -22,17 +20,20 @@ import co.uk.f3.payment.model.domain.Payment;
 
 public class PaymentValidator {
 
-	public static void validateINput(Payment requestData) {
+	public static void validateINput(Payment requestData) throws IOException {
 		final Logger LOGGER = LoggerFactory.getLogger(PaymentController.class);
 		try {
 			JsonNode requestDataJsonNode = JsonLoader.fromString(json(requestData));
-			final JsonNode node = JsonLoader.fromResource("/schema.json");
-			InputStream inputStream = new ByteArrayInputStream(node.toString().getBytes(StandardCharsets.UTF_8.name()));
-			JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
-			Schema schema = SchemaLoader.load(rawSchema);
-			schema.validate(new JSONObject(requestDataJsonNode.toString()));
+			
+			JSONObject jsonSchema = new JSONObject(
+					new JSONTokener(PaymentValidator.class.getResourceAsStream("/validation/schema/schema.json")));
+			JSONObject jsonSubject = new JSONObject(
+					new JSONTokener(requestDataJsonNode.toString()));
+			
+			Schema schema = SchemaLoader.load(jsonSchema);
+			schema.validate(new JSONObject(jsonSubject));
 
-		} catch (Exception e) {
+		} catch (ValidationException e) {
 			LOGGER.error(e.getMessage().toString());
 		}
 	}

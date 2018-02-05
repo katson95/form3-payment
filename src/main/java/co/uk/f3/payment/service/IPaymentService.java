@@ -15,5 +15,5 @@ public interface IPaymentService {
 
 	public Set<Payment> fetchPayments();
 
-	public void deletePaymentById(String id);
+	public boolean deletePaymentById(String id);
 }
