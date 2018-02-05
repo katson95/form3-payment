@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.uk.f3.payment.exception.handler.DocumentNotFoundException;
+import co.uk.f3.payment.exception.handler.PaymentNotFoundException;
 import co.uk.f3.payment.exception.handler.InvalidRequestException;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.service.IPaymentService;
@@ -70,7 +70,7 @@ public class PaymentController {
 		Optional<Payment> optionalPayment = paymentService.fetchPaymentById(id);
 		if (!optionalPayment.isPresent()) {
 			LOGGER.error("Payment with id {} not found.", id);
-			throw new DocumentNotFoundException(id);
+			throw new PaymentNotFoundException(id);
 		}
 
 		Payment paymentValue = optionalPayment.get();
@@ -124,7 +124,7 @@ public class PaymentController {
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		}
 		LOGGER.error("Payment with id {} not found.", id);
-		throw new DocumentNotFoundException(id);
+		throw new PaymentNotFoundException(id);
 	}
 
 }

@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import co.uk.f3.payment.exception.handler.DocumentNotFoundException;
+import co.uk.f3.payment.exception.handler.PaymentNotFoundException;
 import co.uk.f3.payment.model.domain.Payment;
 import co.uk.f3.payment.unit.service.PaymentServiceTest;
 import co.uk.f3.utils.PaymentCollectionGenerator;
@@ -160,7 +160,7 @@ public class PaymentControllerTest {
 	}
 
 	@Test
-	public void findPaymentById_ShouldThrowEntityNotFoundExceptionForUnknownPayment() throws DocumentNotFoundException {
+	public void findPaymentById_ShouldThrowEntityNotFoundExceptionForUnknownPayment() throws PaymentNotFoundException {
 		String id = UUID.randomUUID().toString();
 		Payment payment = PaymentCollectionGenerator.createBasicTestPaymentWithId(id);
 		mongoTemplate.insert(payment);

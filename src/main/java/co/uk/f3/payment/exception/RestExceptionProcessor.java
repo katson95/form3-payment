@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import co.uk.f3.payment.exception.handler.DocumentNotFoundException;
+import co.uk.f3.payment.exception.handler.PaymentNotFoundException;
 import co.uk.f3.payment.exception.handler.InvalidRequestException;
 import co.uk.f3.payment.exception.message.ErrorInfo;
 import co.uk.f3.payment.exception.message.ErrorResource;
@@ -33,9 +33,9 @@ public class RestExceptionProcessor extends ResponseEntityExceptionHandler {
 	@Autowired
 	private MessageSource messageSource;
 
-	@ExceptionHandler(DocumentNotFoundException.class)
+	@ExceptionHandler(PaymentNotFoundException.class)
 	@ResponseBody
-	public ResponseEntity<ErrorInfo> userNotFound(HttpServletRequest req, DocumentNotFoundException ex) {
+	public ResponseEntity<ErrorInfo> userNotFound(HttpServletRequest req, PaymentNotFoundException ex) {
 
 		String errorMessage = "";
 		errorMessage = "Payment with id: " + ex.getDocumentId() + " does not exist!";
