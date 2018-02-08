@@ -16,7 +16,6 @@ buildscript {
 }
 
 apply plugin: 'java'
-
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: org.springframework.boot.gradle.plugin.SpringBootPlugin
@@ -62,10 +61,8 @@ dependencies {
 	compile('io.springfox:springfox-swagger-ui:2.6.1')
 	compile("com.github.java-json-tools:json-schema-validator:2.2.8");
 	compile("com.fasterxml.jackson.datatype:jackson-datatype-joda:2.0.2");
-	
-	compile group: 'com.github.fge', name: 'jackson-coreutils', version: '1.0'
-    compile group: 'org.everit.json', name: 'org.everit.json.schema', version: '1.5.1'
-	
+	compile("com.github.fge:jackson-coreutils:1.0");
+	compile("org.everit.json:org.everit.json.schema:1.5.1");
 	
 	compileOnly "org.projectlombok:lombok"
 	
@@ -82,8 +79,8 @@ dependencies {
 
 cucumber {
     formats = ['pretty','json:build/cucumber.json']
-    glueDirs = ['src/cucumber/java', 'classpath:co.uk.f3.payment.e2e']
-    featureDirs = [ 'src/cucumber/resources/features' ]
+    glueDirs = ['src/test/java', 'classpath:co.uk.f3.payment.e2e']
+    featureDirs = [ 'src/test/resources/features' ]
     monochrome = false
     strict = true
     dryRun = false
@@ -95,6 +92,13 @@ cucumber {
     }
 }
 
+task copyJarToBin {
+    copy {
+        from 'build/libs/f3-payment-service-0.0.1-SNAPSHOT.jar'
+        into "src/docker/resources/f3-payment-app/config"
+    }
+}
+
 
 
 test {
@@ -103,6 +107,6 @@ test {
 }
 
 dockerCompose {
-  useComposeFiles = ['src/test/resources/docker-compose.yml']
+  useComposeFiles = ['src/docker/resources/docker-compose/docker-compose-cmp.yml']
 
 }
