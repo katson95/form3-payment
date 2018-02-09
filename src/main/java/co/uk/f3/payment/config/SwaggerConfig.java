@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -28,9 +27,9 @@ public class SwaggerConfig {
                 "F3 Payment REST API Service",
                 "1.0",
                 "Terms of service",
-                new Contact("Nissi Tafie", "https://form3.tech/", "nissi.tafie@gmail.com"),
                "Apache License Version 2.0",
-                " ");
+                " ",
+                null);
         return apiInfo;
     }
 }

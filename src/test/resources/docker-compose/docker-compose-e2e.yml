@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  f3-payment-db:
+    build:
+      context: ../f3-payment-db
+      dockerfile: Dockerfile
+    ports:
+      - "27017:27017"
