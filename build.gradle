@@ -104,5 +104,6 @@ test {
 
 dockerCompose {
   useComposeFiles = ['src/test/resources/docker-compose.yml']
+  executable = '/usr/local/bin/docker-compose'
 
 }
