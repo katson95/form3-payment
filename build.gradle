@@ -109,17 +109,4 @@ dockerCompose {
 
 }
 
-artifactory {
-    contextUrl = 'http://ec2-54-194-254-241.eu-west-1.compute.amazonaws.com/artifactory'
-    publish {
-        repository {
-            repoKey = 'example-repo-local' // The Artifactory repository key to publish to
-            username = "admin01" // The publisher user name
-            password = "coelom" // The publisher password
-        }
-        
-    }
-    resolve {
-        repoKey = 'jcenter'
-    }
-}
+
