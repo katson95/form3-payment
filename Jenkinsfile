@@ -4,9 +4,11 @@ node {
       
    }
    stage('Build') {
+      sh 'chmod +x gradlew'
       sh './gradlew clean'
    }
    stage('Results') {
+      sh 'chmod +x gradlew'
       sh './gradlew test'
    }
 }
