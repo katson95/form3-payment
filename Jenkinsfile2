@@ -1,5 +1,4 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
-git 'https://github.com/katson95/form3-payment.git'
 podTemplate(label: label, containers: [
 
     containerTemplate(name: 'gradle', image: 'katson95/gradle:5.0', ttyEnabled: true, command: 'cat')  ]) {
