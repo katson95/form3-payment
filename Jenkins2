@@ -1,0 +1,14 @@
+def label = "mypod-${UUID.randomUUID().toString()}"
+podTemplate(label: label, containers: [
+    containerTemplate(name: 'gradle', image: 'katson95/gradle:5.0', ttyEnabled: true, command: 'cat')  ]) {
+
+    node(label) {
+        stage('Get a Gradle project') {
+            container('gradle') {
+                stage('Build a Gradle project') {
+                    sh 'gradle -v'
+                }
+            }
+        }
+    }
+}
