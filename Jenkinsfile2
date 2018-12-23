@@ -16,7 +16,7 @@ podTemplate(label: label, containers: [
                 stage('Build project') {
                 
                     sh 'chmod +x gradlew'
-                    sh './gradlew clean'
+                    sh './gradlew clean --stacktrace'
                 }
                 
                 stage('Run Tests') {  
