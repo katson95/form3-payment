@@ -11,13 +11,13 @@ podTemplate(label: label, containers: [
                 sh 'id'
                 stage('Build project') {
                 sh 'id'
-                    //sh 'chmod +x gradlew'
+                    sh 'chmod +x gradlew'
                     sh './gradlew clean'
                 }
                 
                 stage('Run Tests') {  
                 sh 'id'
-                    //sh 'chmod +x gradlew'
+                    sh 'chmod +x gradlew'
                     sh './gradlew test'
                 }
             }
