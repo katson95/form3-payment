@@ -10,16 +10,14 @@ podTemplate(label: label, containers: [
                 git 'https://github.com/katson95/form3-payment.git'
                 stage('Build project') {
                 
-                   //sh 'chmod +x gradlew'
-                    //sh './gradlew clean'
-                    sh 'gradle clean --stacktrace'
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean'
                 }
                 
                 stage('Run Tests') {  
                 
-                   // sh 'chmod +x gradlew'
-                    // sh './gradlew test'
-                    sh 'gradle test'
+                    sh 'chmod +x gradlew'
+                    sh './gradlew test'
                 }
             }
         }
