@@ -1,6 +1,6 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
-             containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.2',ttyEnabled: true, command: 'cat'),
+             containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.1',ttyEnabled: true, command: 'cat'),
              containerTemplate(name: 'gradle', image: 'gradle:latest', ttyEnabled: true, command: 'cat')
              
              ]) {
