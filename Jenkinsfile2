@@ -7,7 +7,7 @@ podTemplate(label: label, containers: [
 
     node(label) {
         stage('Get a Gradle project') {
-            container('gradle') {
+            container('i360-agent') {
                 git 'https://github.com/katson95/form3-payment.git'
                 stage('Build project') {
                 
