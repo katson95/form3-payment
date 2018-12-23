@@ -67,7 +67,7 @@ dependencies {
 	compile group: 'com.github.fge', name: 'jackson-coreutils', version: '1.0'
     compile group: 'org.everit.json', name: 'org.everit.json.schema', version: '1.5.1'
 	
-	runtime files(org.gradle.internal.jvm.Jvm.current().toolsJar)
+	//runtime files(org.gradle.internal.jvm.Jvm.current().toolsJar)
 	
 	compileOnly "org.projectlombok:lombok"
 	
