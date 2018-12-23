@@ -10,15 +10,11 @@ podTemplate(label: label, containers: [
             container('i360-agent') {
                 git 'https://github.com/katson95/form3-payment.git'
                 stage('Build project') {
-                
-                    sh 'chmod +x gradlew'
-                    sh './gradlew clean build'
-                }
-                
-                stage('Run Tests') {  
-                
-                    sh 'chmod +x gradlew'
-                    sh './gradlew test'
+                docker.image('gradle').inside {
+                        rtGradle.run rootDir: 'gradle-examples/gradle-example-ci-server/', buildFile: 'build.gradle', tasks: 'aP', buildInfo: buildInfo
+                    }                    
+                    //sh 'chmod +x gradlew'
+                    //sh './gradlew clean build'
                 }
             }
         }
