@@ -6,7 +6,8 @@ podTemplate(label: label, containers: [
     node(label) {
         stage('Get a Gradle project') {
         sh 'id'
-        sh 'ls -ltr /gradle/wrapper/dists/gradle-4.2-bin'
+        sh 'ls -ltr /usr/bin'
+        sh 'ls -ltr /usr/bin/gradle/wrapper/dists/gradle-4.2-bin'
         sh 'rm -rf /gradle/wrapper/dists/gradle-4.2-bin'
             container('i360-agent') {
                 git 'https://github.com/katson95/form3-payment.git'
