@@ -1,7 +1,7 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
 
-    containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.0', ttyEnabled: true, command: 'cat')  ]) {
+    containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.1', ttyEnabled: true, command: 'cat')  ]) {
 
     node(label) {
         stage('Get a Gradle project') {
@@ -11,14 +11,14 @@ podTemplate(label: label, containers: [
                 sh 'id'
                 stage('Build project') {
                 sh 'id'
-                    //sh 'chmod +x gradlew'
-                    //sh './gradlew clean'
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean'
                 }
                 
                 stage('Run Tests') {  
                 sh 'id'
-                    //sh 'chmod +x gradlew'
-                    //sh './gradlew test'
+                    sh 'chmod +x gradlew'
+                    sh './gradlew test'
                 }
             }
         }
