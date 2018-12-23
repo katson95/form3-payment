@@ -1,4 +1,26 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: jnlp-
+  labels:
+    name: jnlp
+    label: jnlp
+spec:
+  containers:
+    - name: jnlp
+    image: katson95/i360-agent:1.2
+    tty: true
+    securityContext:
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+    - name: jenkins
+      image: jenkins/jenkins
+      tty: true
+      securityContext:
+       runAsUser: 1000
+       allowPrivilegeEscalation: false
+"""
 podTemplate(label: label, containers: [
 
     containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.2', ttyEnabled: true, command: 'cat')  ]) {
