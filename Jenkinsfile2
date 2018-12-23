@@ -5,18 +5,17 @@ podTemplate(label: label, containers: [
 
     node(label) {
         stage('Get a Gradle project') {
-        sh 'id'
+                sh 'id'
             container('i360-agent') {
                 git 'https://github.com/katson95/form3-payment.git'
-                sh 'id'
                 stage('Build project') {
-                sh 'id'
+                
                     sh 'chmod +x gradlew'
                     sh './gradlew clean'
                 }
                 
                 stage('Run Tests') {  
-                sh 'id'
+                
                     sh 'chmod +x gradlew'
                     sh './gradlew test'
                 }
