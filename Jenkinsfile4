@@ -1,14 +1,28 @@
-pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine' 
-            args '-v /root/.m2:/root/.m2' 
-        }
-    }
-    stages {
-        stage('Build') { 
-            steps {
-                sh 'mvn -B -DskipTests clean package' 
+podTemplate(
+    label: 'mypod', 
+    inheritFrom: 'default',
+    containers: [
+        containerTemplate(
+            name: 'i360-agent', 
+            image: 'katson95/i360-agent:1.6',
+            ttyEnabled: true,
+            command: 'cat'
+        )
+    ],
+    volumes: [
+        hostPathVolume(
+            hostPath: '/var/run/docker.sock',
+            mountPath: '/var/run/docker.sock'
+        )
+    ]
+) {
+    node('mypod') {
+        def commitId
+        def repository
+        stage ('Gradle & Docker') {
+            container ('i360-agent') {
+                sh "docker ps"
+                sh "docker-compose -v"
             }
         }
     }
