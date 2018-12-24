@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'katson95/i360-agent:1.4' 
+            image 'katson95/i360-agent:1.6' 
             args '/var/run/docker.sock:/var/run/docker.sock'
             
         }
