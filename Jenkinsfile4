@@ -19,6 +19,22 @@ podTemplate(
     node('mypod') {
         def commitId
         def repository
+        
+       stage('Checkout') { 
+              git 'https://github.com/katson95/form3-payment.git'
+           }
+       stage('Build') {
+           container ('i360-agent') {
+                  sh 'chmod +x gradlew'
+                  sh './gradlew clean'
+               }
+           }
+       stage('Results') {
+           container ('i360-agent') {
+                  sh 'chmod +x gradlew'
+                  sh './gradlew test'
+               }
+          }
         stage ('Gradle & Docker') {
             container ('i360-agent') {
                 sh "docker ps"
