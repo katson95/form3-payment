@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'gradle:latest' 
-            args /var/run/docker.sock:/var/run/docker.sock
+            args '/var/run/docker.sock:/var/run/docker.sock'
             
         }
     }
