@@ -22,7 +22,7 @@ podTemplate(label: label, containers: [
                 
                 stage('Build project') {
                      sh 'chmod +x gradlew'
-                     sh 'sudo ./gradlew clean'
+                     sh './gradlew clean --info'
                 }
             }
         }
