@@ -10,7 +10,7 @@ podTemplate(label: label, containers: [
             mountPath: '/var/run/docker.sock'
         )
     ]) {
-    node('mypod') {
+    node(label) {
        git 'https://github.com/katson95/form3-payment.git'
        stage('Build') {
            container ('i360-g-agent') {
