@@ -36,13 +36,7 @@ podTemplate(label: label, containers: [
                   sh 'ansible-playbook --version'
                }
            }
-           
-       stage ('Gradle & Docker') {
-            container ('i360-agent') {
-                sh "docker ps"
-                sh "docker-compose -v"
-            }
-        }
+
         
          stage('Node Js') {
            container ('nodejs-agent') {
@@ -54,6 +48,14 @@ podTemplate(label: label, containers: [
                   sh 'docker-compose -v'
                }
          }
+              
+       stage ('Gradle & Docker') {
+            container ('i360-agent') {
+                sh "docker ps"
+                sh "docker-compose -v"
+            }
+        }
+        
          stage('Test') {
            container ('i360-agent') {
                   sh 'chmod +x gradlew'
