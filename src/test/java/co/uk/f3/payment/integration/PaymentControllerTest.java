@@ -41,7 +41,7 @@ import co.uk.f3.utils.PaymentCollectionGenerator;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PaymentControllerTest {
-/**
+
 	public static final Logger LOGGER = LoggerFactory.getLogger(PaymentControllerTest.class);
 
 	@Autowired
@@ -177,5 +177,5 @@ public class PaymentControllerTest {
 	public void tearDown() {
 		mongoTemplate.dropCollection(Payment.class);
 	}
-	**/
+	
 }

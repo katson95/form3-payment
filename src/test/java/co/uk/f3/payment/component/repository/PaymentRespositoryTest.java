@@ -21,7 +21,7 @@ import co.uk.f3.utils.PaymentCollectionGenerator;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PaymentRespositoryTest {
-/**
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
@@ -55,5 +55,5 @@ public class PaymentRespositoryTest {
 	public void tearDown() {
 		mongoTemplate.dropCollection(Payment.class);
 	}
-	**/
+	
 }
