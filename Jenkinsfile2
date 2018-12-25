@@ -3,7 +3,13 @@ podTemplate(label: label, containers: [
              containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.6',ttyEnabled: true, command: 'cat'),
              containerTemplate(name: 'gradle', image: 'gradle:latest', ttyEnabled: true, command: 'cat')
              
-             ]) {
+             ],
+             volumes: [
+        hostPathVolume(
+            hostPath: '/var/run/docker.sock',
+            mountPath: '/var/run/docker.sock'
+        )
+    ]) {
 
     node(label) {
         stage('Get a Gradle project') {
