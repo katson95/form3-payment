@@ -11,7 +11,9 @@ podTemplate(label: label, containers: [
                 git 'https://github.com/katson95/form3-payment.git'
                 stage('Build project') {
                 docker.image('i360-agent').inside {
-                        rtGradle.run rootDir: 'gradle-examples/gradle-example-ci-server/', buildFile: 'build.gradle', tasks: 'aP', buildInfo: buildInfo
+                     //   rtGradle.run rootDir: 'gradle-examples/gradle-example-ci-server/', buildFile: 'build.gradle', tasks: 'aP', buildInfo: buildInfo
+                     sh 'chmod +x gradlew'
+                     sh './gradlew clean'
                     }                    
                     //sh 'chmod +x gradlew'
                     //sh './gradlew clean'
