@@ -2,7 +2,7 @@ def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
              containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.9',ttyEnabled: true, command: 'cat'),
              containerTemplate(name: 'g-agent', image: 'katson95/g-agent:1.6', ttyEnabled: true, command: 'cat'),
-             containerTemplate(name: 'nodejs-agent', image: 'katson95/nodejs-agent:1.1', ttyEnabled: true, alwaysPullImage: true, command: 'cat'),
+             containerTemplate(name: 'nodejs-agent', image: 'katson95/nodejs-agent:1.2', ttyEnabled: true, alwaysPullImage: true, command: 'cat'),
              containerTemplate(name: 'a-360', image: 'katson95/a-360:latest', ttyEnabled: true, alwaysPullImage: true, command: 'cat')
              ],
              volumes: [
@@ -36,6 +36,14 @@ podTemplate(label: label, containers: [
                   sh 'ansible-playbook --version'
                }
            }
+           
+       stage ('Gradle & Docker') {
+            container ('i360-agent') {
+                sh "docker ps"
+                sh "docker-compose -v"
+            }
+        }
+        
          stage('Node Js') {
            container ('nodejs-agent') {
                   sh 'node -v'
@@ -52,12 +60,5 @@ podTemplate(label: label, containers: [
                   //sh './gradlew test'
                }
          }
-           
-        stage ('Gradle & Docker') {
-            container ('i360-agent') {
-                sh "docker ps"
-                sh "docker-compose -v"
-            }
-        }
     }
 }
