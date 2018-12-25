@@ -1,6 +1,6 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
-             containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.6',ttyEnabled: true, command: 'cat'),
+             containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.7',ttyEnabled: true, command: 'cat'),
              containerTemplate(name: 'g-agent', image: 'katson95/g-agent:1.6', ttyEnabled: true, command: 'cat')
              ],
              volumes: [
@@ -20,7 +20,7 @@ podTemplate(label: label, containers: [
            }
            
          stage('Test') {
-           container ('g-agent') {
+           container ('i360-agent') {
                   sh 'chmod +x gradlew'
                   //sh './gradlew test'
                }
