@@ -16,6 +16,7 @@ podTemplate(label: label, containers: [
            container ('a-360') {
                   sh 'chmod +x gradlew'
                   sh './gradlew clean'
+                  sh "docker ps"
                }
            }
            
