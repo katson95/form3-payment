@@ -14,14 +14,14 @@ podTemplate(label: label, containers: [
        stage('Build') {
            container ('g-agent') {
                   sh 'chmod +x gradlew'
-                  sh './gradlew clean --stacktrace'
+                  sh './gradlew clean'
                }
            }
            
          stage('Test') {
            container ('i360-agent') {
                   sh 'chmod +x gradlew'
-                  sh './gradlew test --stacktrace'
+                  sh './gradlew test'
                }
          }
            
