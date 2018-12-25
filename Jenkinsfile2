@@ -18,21 +18,13 @@ podTemplate(label: label, containers: [
                   sh 'chmod +x gradlew'
                   sh './gradlew clean'
                   sh 'java -version'
-
                   sh 'gradle -v'
-
                   sh 'pip3 --version'
-
                   sh 'python3 --version'
-
                   sh 'docker -v'
-
                   sh 'docker-compose -v'
-
                   sh 'docker ps'
-
                   sh 'ansible --version'
-
                   sh 'ansible-playbook --version'
                }
            }
