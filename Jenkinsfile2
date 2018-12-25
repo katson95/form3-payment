@@ -15,6 +15,7 @@ podTemplate(label: label, containers: [
        stage('Build') {
            container ('g-agent') {
                   sh 'chmod +x gradlew'
+                  sh 'ls -lta'
                   sh './gradlew clean'
                }
            }
