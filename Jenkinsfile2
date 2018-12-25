@@ -22,7 +22,7 @@ podTemplate(label: label, containers: [
          stage('Test') {
            container ('g-agent') {
                   sh 'chmod +x gradlew'
-                  sh './gradlew test'
+                  //sh './gradlew test'
                }
          }
            
