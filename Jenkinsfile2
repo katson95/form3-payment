@@ -1,6 +1,6 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
-             containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.1',ttyEnabled: true, command: 'cat'),
+             containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.6',ttyEnabled: true, command: 'cat'),
              containerTemplate(name: 'gradle', image: 'gradle:latest', ttyEnabled: true, command: 'cat')
              
              ]) {
@@ -14,7 +14,7 @@ podTemplate(label: label, containers: [
                         rtGradle.run rootDir: 'gradle-examples/gradle-example-ci-server/', buildFile: 'build.gradle', tasks: 'aP', buildInfo: buildInfo
                     }                    
                     //sh 'chmod +x gradlew'
-                    //sh './gradlew clean build'
+                    //sh './gradlew clean'
                 }
             }
         }
