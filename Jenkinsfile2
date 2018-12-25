@@ -16,6 +16,7 @@ podTemplate(label: label, containers: [
             container('i360-agent') {
                 git 'https://github.com/katson95/form3-payment.git'
                 stage('Build project') {
+                     sh 'docker ps'
                      sh 'chmod +x gradlew'
                      sh './gradlew clean'
                 }
