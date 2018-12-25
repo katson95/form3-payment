@@ -14,7 +14,6 @@ podTemplate(label: label, containers: [
        stage('Build') {
            container ('g-agent') {
                   sh 'chmod +x gradlew'
-                  sh 'ls -lta'
                   sh './gradlew clean'
                }
            }
@@ -22,7 +21,7 @@ podTemplate(label: label, containers: [
          stage('Test') {
            container ('i360-agent') {
                   sh 'chmod +x gradlew'
-                  //sh './gradlew test'
+                  sh './gradlew test'
                }
          }
            
