@@ -1,5 +1,4 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
-git 'https://github.com/katson95/form3-payment.git'
 podTemplate(label: label, containers: [
              containerTemplate(name: 'i360-agent', image: 'katson95/i360-agent:1.6',ttyEnabled: true, command: 'cat'),
              containerTemplate(name: 'i360-g-agent', image: 'katson95/i360-agent:1.0', ttyEnabled: true, command: 'cat')
@@ -12,6 +11,7 @@ podTemplate(label: label, containers: [
         )
     ]) {
     node('mypod') {
+       git 'https://github.com/katson95/form3-payment.git'
        stage('Build') {
            container ('i360-g-agent') {
                   sh 'chmod +x gradlew'
