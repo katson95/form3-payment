@@ -11,21 +11,17 @@ podTemplate(label: label, containers: [
             mountPath: '/var/run/docker.sock'
         )
     ]) {
-
-    node(label) {
-        stage('Get a Gradle project') {
-            container('i360-agent') {
-                stage('Build project') {
-                     sh 'docker ps'
-                     sh 'ls -lta'
-                }
-            }
-            
-           container('i360-g-agent') {
-                stage('Build project') {
-                     sh 'chmod +x gradlew'
-                     sh './gradlew clean --info'
-                }
+    node('mypod') {
+       stage('Build') {
+           container ('i360-g-agent') {
+                  sh 'chmod +x gradlew'
+                  sh './gradlew clean'
+               }
+           }
+        stage ('Gradle & Docker') {
+            container ('i360-agent') {
+                sh "docker ps"
+                sh "docker-compose -v"
             }
         }
     }
