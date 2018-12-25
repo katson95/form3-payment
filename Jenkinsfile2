@@ -19,6 +19,14 @@ podTemplate(label: label, containers: [
                   sh './gradlew clean'
                }
            }
+           
+         stage('Test') {
+           container ('g-agent') {
+                  sh 'chmod +x gradlew'
+                  sh './gradlew test'
+               }
+         }
+           
         stage ('Gradle & Docker') {
             container ('i360-agent') {
                 sh "docker ps"
